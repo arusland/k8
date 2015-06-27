@@ -1,0 +1,68 @@
+= K8 - Desktop Search Engine
+Ruslan Absalyamov <ruslan.absalyamov@gmail.com>
+v1.0, `2015-06-27`
+:toc:
+
+== Notions
+=== Search Source
+*Search Source* - source where search indexing begins.
+
+.Search Source contains several properties
+* *Path* - Path where search begins. (e.g. \\somesrv\books)
+* *Type* - type of the source
+** *FileSystem* - search result is file
+** *Database* - search result is db objects (table, stored procedures, udf, etc.)
+* *Owners* - Set (email list) of owners of the search source. Results of such search is accessible only for authenticated user.
+** When owners is empty it accessible for everyone.
+
+=== Search result
+An object which represents atomic result of the certain search
+
+.Search result properties
+* Name - short name of the object (file name, table/SP/UDF name, etc)
+* Path - long name of the object (file path)
+* Size - object size in bytes
+* Hash - md5 hash sum (using while finding duplicate files)
+* Content - content of the object
+* Type - Type of the source
+* SubType - subtype of the object (e.g. for file: (text file, image, binary, ...), for dboject: (table, sp, udf, ...))
+* Icon - icon of the object (subtype)
+	
+=== Type parser
+Type parser provides getting of a document for particular mime-type.
+
+.Type parser properties
+* Name
+* Types - supported mime formats
+
+==== Supported formats
+* txt
+* html
+* doc(x)
+* pdf
+* msg (outlook format)
+* skype
+* source code
+
+=== Catalog System
+Catalog system supports walking through objects from the sources.
+
+.Catalog System providers
+* FileCatalogSystemProvider
+* DatabaseCatalogSystemProvider
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
