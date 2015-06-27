@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * Created by ruslan on 27.06.2015.
  */
 public class FileSearchObject extends SearchObject {
-    private static Pattern ROOT_DRIVE = Pattern.compile("^(\\w):\\\\$");
+    private final static Pattern ROOT_DRIVE = Pattern.compile("^(\\w):\\\\$");
     private final File file;
 
     public FileSearchObject(File file) throws IOException {

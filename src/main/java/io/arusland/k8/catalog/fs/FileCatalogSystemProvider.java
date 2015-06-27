@@ -5,6 +5,7 @@ import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,13 @@ import java.util.List;
  * Created by ruslan on 27.06.2015.
  */
 public class FileCatalogSystemProvider implements CatalogSystemProvider {
+    private final FileSkipProvider fileSkipper;
+
+    @Autowired
+    public FileCatalogSystemProvider(FileSkipProvider fileSkipper) {
+        this.fileSkipper = Validate.notNull(fileSkipper, "fileSkipper");
+    }
+
     @Override
     public SourceType getSourceType() {
         return SourceType.FileSystem;
@@ -25,8 +33,8 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         Validate.notNull(source, "source");
         Validate.isTrue(source.getType() == SourceType.FileSystem, "source must be SourceType.FileSystem");
 
-        File file = new File(source.getPath());
-        LinkedList<SearchObject> result = new LinkedList<>();
+        final File file = new File(source.getPath());
+        final LinkedList<SearchObject> result = new LinkedList<>();
 
         try {
             result.add(new FileSearchObject(file));
@@ -42,11 +50,11 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         Validate.isInstanceOf(FileSearchObject.class, catalog);
         Validate.isTrue(catalog.isCatalog(), "Method supports only catalog objects");
 
-        File file = ((FileSearchObject) catalog).getFile();
-        LinkedList<SearchObject> result = new LinkedList<>();
+        final File file = ((FileSearchObject) catalog).getFile();
+        final LinkedList<SearchObject> result = new LinkedList<>();
 
         if (file.exists()) {
-            File[] files = file.listFiles();
+            final File[] files = file.listFiles(file1 -> !fileSkipper.test(file1));
 
             for (File fileChild : files) {
                 try {

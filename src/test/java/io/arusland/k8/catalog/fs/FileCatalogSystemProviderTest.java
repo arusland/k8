@@ -12,7 +12,8 @@ import java.util.List;
  */
 public class FileCatalogSystemProviderTest extends TestCase {
     public void testProvider(){
-        final FileCatalogSystemProvider provider = new FileCatalogSystemProvider();
+        FileSkipProvider fileSkipper = new FileSkipProvider();
+        final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\");
 
         List<SearchObject> objects = provider.getObjects(source);
