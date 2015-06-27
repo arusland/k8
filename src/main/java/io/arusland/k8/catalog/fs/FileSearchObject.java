@@ -1,6 +1,7 @@
 package io.arusland.k8.catalog.fs;
 
 import io.arusland.k8.catalog.KnownObjectIcons;
+import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
@@ -9,6 +10,10 @@ import org.apache.commons.lang3.Validate;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Date;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +28,14 @@ public class FileSearchObject extends SearchObject {
         super(normalizeFileName(Validate.notNull(file)), file.getAbsolutePath(), file.isDirectory() ? 0L : file.length(),
                 file.isDirectory() ? HashUtils.sha1Hex(file.getAbsolutePath()) : HashUtils.sha1Hex(file),
                 StringUtils.EMPTY, SourceType.FileSystem, FileTypeHelper.getObjectType(file),
-                KnownObjectIcons.BINARY_FILE, file.isDirectory());
+                KnownObjectIcons.BINARY_FILE, getFileCreateTime(file), new Date(file.lastModified()), file.isDirectory());
 
         this.file = file;
+    }
+
+    public FileSearchObject(PropertyGetter fields){
+        super(fields, SourceType.FileSystem);
+        this.file = null;
     }
 
     public File getFile() {
@@ -44,5 +54,16 @@ public class FileSearchObject extends SearchObject {
         }
 
         return file.getName();
+    }
+
+    @Override
+    public Map<String, Object> toDoc() {
+        return super.toDoc();
+    }
+
+    private static Date getFileCreateTime(File file) throws IOException {
+        BasicFileAttributes attrs = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+
+        return new Date(attrs.creationTime().toMillis());
     }
 }
