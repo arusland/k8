@@ -1,5 +1,6 @@
 package io.arusland.k8.catalog;
 
+import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
 import org.apache.commons.lang3.Validate;
@@ -131,6 +132,14 @@ public class SearchObject {
         doc.put(MODIFY_DATE, new Timestamp(getModifyDate().getTime()));
 
         return doc;
+    }
+
+    public boolean isPathEquals(SearchSource source){
+        if (source == null){
+            return false;
+        }
+
+        return source.getPath().toLowerCase().equals(getPath().toLowerCase());
     }
 
     @Override

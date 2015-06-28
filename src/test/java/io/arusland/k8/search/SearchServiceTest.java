@@ -1,5 +1,6 @@
 package io.arusland.k8.search;
 
+import io.arusland.k8.TestConfig;
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.FileCatalogSystemProvider;
 import io.arusland.k8.catalog.fs.FileSkipProvider;
@@ -16,8 +17,8 @@ public class SearchServiceTest extends TestCase {
     public void test(){
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
-        final SearchSource source = new SearchSource(SourceType.FileSystem, "d:\\WORK\\MyProjects\\k8\\src\\test\\data\\");
-        SearchService service = new SearchService();
+        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
+        SearchService service = new ElasticSearchService();
 
         SearchObject rootObject = provider.getCatalog(source);
         Iterator<SearchObject> files = provider.getObjects(rootObject).iterator();
@@ -28,7 +29,7 @@ public class SearchServiceTest extends TestCase {
             count++;
         }
 
-        assertEquals(2, count);
+        assertEquals(4, count);
 
         service.search("test");
     }

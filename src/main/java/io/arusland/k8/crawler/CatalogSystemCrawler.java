@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -24,11 +25,15 @@ public class CatalogSystemCrawler implements Runnable {
     private final CatalogSystemProvider catalogProvider;
     private final SearchService searchService;
     private final List<Thread> threads = new LinkedList<>();
+    private final Consumer<CatalogSystemCrawler> currentPathChangedHandler;
     private volatile Iterator<SearchObject> currentIterator;
     private final List<SearchObject> currentCatalogsBag = Collections.synchronizedList(new LinkedList<>());
+    private String currentCatalogPath;
 
     public CatalogSystemCrawler(SearchSource source, CatalogSystemProvider catalogSystemProvider,
-                                SearchService searchService, int threadCount) {
+                                SearchService searchService, Consumer<CatalogSystemCrawler> currentPathChangedHandler,
+                                int threadCount) {
+        this.currentPathChangedHandler = currentPathChangedHandler;
         this.searchService = Validate.notNull(searchService);
         this.source = Validate.notNull(source);
         this.catalogProvider = Validate.notNull(catalogSystemProvider);
@@ -42,17 +47,56 @@ public class CatalogSystemCrawler implements Runnable {
 
     @Override
     public void run() {
-        logger.debug("Starting crawler for: " + source);
+        logger.debug("Started crawler for: " + source);
 
         threads.stream().forEach(p -> {
             p.setDaemon(true);
             p.start();
         });
 
-        final SearchObject rootCatalog = catalogProvider.getCatalog(source);
+        SearchObject rootCatalog = catalogProvider.getCatalog(source);
         searchService.index(rootCatalog);
 
         handleCatalog(rootCatalog);
+
+        if (source.hasLastActiveCatalog() && !rootCatalog.isPathEquals(source)) {
+            SearchObject parent = catalogProvider.getParent(rootCatalog);
+
+            while (parent != null) {
+                Iterator<SearchObject> iterator = catalogProvider.getObjects(parent).iterator();
+
+                // search current catalog and start indexing after it
+                while (iterator.hasNext()) {
+                    SearchObject nextObject = iterator.next();
+
+                    if (nextObject != null) {
+                        if (nextObject.isCatalog()) {
+                            if (nextObject.getHash().equals(rootCatalog.getHash())) {
+                                break;
+                            }
+                        } else {
+                            // oops! we cannot find current catalog, but we found file
+                            // index it and continue indexing all the rest files
+                            searchService.index(nextObject);
+                            break;
+                        }
+                    }
+                }
+
+                // rest the rest catalog & files
+                handleIterator(iterator);
+
+                if (parent.isPathEquals(source)) {
+                    break;
+                }
+
+                // go catalog up
+                rootCatalog = parent;
+                parent = catalogProvider.getParent(parent);
+            }
+        }
+
+        setCurrentCatalogPath(null);
 
         logger.debug("Stopped crawler for: " + source);
     }
@@ -60,9 +104,16 @@ public class CatalogSystemCrawler implements Runnable {
     private void handleCatalog(SearchObject rootCatalog) {
         Validate.isTrue(rootCatalog.isCatalog(), "Must be catalog object");
 
-        currentCatalogsBag.clear();
+        setCurrentCatalogPath(rootCatalog.getPath());
 
         final Iterator<SearchObject> objectsIterator = catalogProvider.getObjects(rootCatalog).iterator();
+
+        handleIterator(objectsIterator);
+    }
+
+    private void handleIterator(Iterator<SearchObject> objectsIterator) {
+        currentCatalogsBag.clear();
+
         setCurrentIterator(objectsIterator);
 
         while (objectsIterator.hasNext()) {
@@ -82,6 +133,20 @@ public class CatalogSystemCrawler implements Runnable {
                     .collect(Collectors.toList());
 
             currentCatalogs.forEach(p -> handleCatalog(p));
+        }
+    }
+
+    public synchronized String getCurrentCatalogPath() {
+        return currentCatalogPath;
+    }
+
+    public void setCurrentCatalogPath(String currentCatalogPath) {
+        synchronized (this) {
+            this.currentCatalogPath = currentCatalogPath;
+        }
+
+        if (currentPathChangedHandler != null) {
+            currentPathChangedHandler.accept(this);
         }
     }
 

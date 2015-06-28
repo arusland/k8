@@ -26,7 +26,7 @@ public class FileSearchObject extends SearchObject {
 
     public FileSearchObject(File file) throws IOException {
         super(normalizeFileName(Validate.notNull(file)), file.getAbsolutePath(), file.isDirectory() ? 0L : file.length(),
-                file.isDirectory() ? HashUtils.sha1Hex(file.getAbsolutePath()) : HashUtils.sha1Hex(file),
+                file.isDirectory() ? HashUtils.sha1Hex(file.getAbsolutePath().toLowerCase()) : HashUtils.sha1Hex(file),
                 StringUtils.EMPTY, SourceType.FileSystem, FileTypeHelper.getObjectType(file),
                 KnownObjectIcons.BINARY_FILE, getFileCreateTime(file), new Date(file.lastModified()), file.isDirectory());
 

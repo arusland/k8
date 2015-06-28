@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Created by ruslan on 27.06.2015.
@@ -40,10 +38,35 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         Validate.notNull(source, "source");
         Validate.isTrue(source.getType() == SourceType.FileSystem, "source must be SourceType.FileSystem");
 
-        final File file = new File(source.getPath());
+        final File rootFile = new File(source.getPath());
+
+        if (!rootFile.exists()) {
+            throw new IllegalStateException("Directory not found: " + rootFile);
+        }
+
+        if (source.hasLastActiveCatalog()) {
+            File file = new File(source.getLastActiveCatalog());
+
+            if (!file.getAbsolutePath().toLowerCase().startsWith(rootFile.getAbsolutePath().toLowerCase())) {
+                throw new IllegalStateException(String.format("Directory '%s' is not inner object of '%s'",
+                        file, rootFile));
+            }
+
+            while (file != null && !file.exists()) {
+                file = file.getParentFile();
+            }
+
+            if (file != null) {
+                try {
+                    return new FileSearchObject(file);
+                } catch (IOException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        }
 
         try {
-            return new FileSearchObject(file);
+            return new FileSearchObject(rootFile);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -61,9 +84,27 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         };
     }
 
+    @Override
+    public SearchObject getParent(SearchObject catalog) {
+        Validate.isTrue(catalog.getSourceType() == SourceType.FileSystem, "source must be SourceType.FileSystem");
+
+        FileSearchObject object = (FileSearchObject)catalog;
+        File parent = object.getFile().getParentFile();
+
+        if (parent != null){
+            try {
+                return new FileSearchObject(parent);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        return null;
+    }
+
     private class FileObjectIterator implements Iterator<SearchObject> {
         private final File[] files;
-        private int currentIndex = -1;
+        private int currentIndex;
 
         public FileObjectIterator(SearchObject catalog) {
             Validate.isInstanceOf(FileSearchObject.class, catalog);
@@ -75,7 +116,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
         @Override
         public boolean hasNext() {
-            return (currentIndex + 1) < files.length;
+            return currentIndex < files.length;
         }
 
         @Override
@@ -83,10 +124,10 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
             File file = null;
 
             synchronized (files) {
-                currentIndex++;
-
                 if (currentIndex < files.length) {
                     file = files[currentIndex];
+
+                    currentIndex++;
                 }
             }
 

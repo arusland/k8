@@ -1,5 +1,7 @@
 package io.arusland.k8.source;
 
+import io.arusland.k8.util.PathUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
 import java.util.LinkedList;
@@ -14,9 +16,14 @@ public class SearchSource {
     private final List<String> owners = new LinkedList<>();
     private String lastActiveCatalog;
 
-    public SearchSource(SourceType type, String path) {
+    public SearchSource(SourceType type, String path, String lastActiveCatalog) {
         this.type = Validate.notNull(type);
-        this.path = Validate.notBlank(path);
+        this.path = PathUtils.normalizePath(Validate.notBlank(path));
+        this.lastActiveCatalog = PathUtils.normalizePath(lastActiveCatalog);
+    }
+
+    public SearchSource(SourceType type, String path) {
+        this(type, path, null);
     }
 
     public SourceType getType() {
@@ -31,7 +38,7 @@ public class SearchSource {
         return owners;
     }
 
-    public boolean isPublic(){
+    public boolean isPublic() {
         return owners.isEmpty();
     }
 
@@ -39,8 +46,8 @@ public class SearchSource {
         return lastActiveCatalog;
     }
 
-    public void setLastActiveCatalog(String lastActiveCatalog) {
-        this.lastActiveCatalog = lastActiveCatalog;
+    public boolean hasLastActiveCatalog() {
+        return StringUtils.isNotBlank(lastActiveCatalog);
     }
 
     @Override

@@ -14,4 +14,6 @@ public interface CatalogSystemProvider {
     SearchObject getCatalog(SearchSource source);
 
     Iterable<SearchObject> getObjects(SearchObject catalog);
+
+    SearchObject getParent(SearchObject catalog);
 }
