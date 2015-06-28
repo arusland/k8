@@ -5,6 +5,8 @@ import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.search.SearchService;
 import io.arusland.k8.source.SearchSource;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -16,6 +18,7 @@ import java.util.stream.Collectors;
  * Created by ruslan on 28.06.2015.
  */
 public class CatalogSystemCrawler implements Runnable {
+    private static Logger logger = LoggerFactory.getLogger(CatalogSystemCrawler.class);
     private final static int WORKER_THREAD_MIN_COUNT = 1;
     private final SearchSource source;
     private final CatalogSystemProvider catalogProvider;
@@ -39,7 +42,7 @@ public class CatalogSystemCrawler implements Runnable {
 
     @Override
     public void run() {
-        System.out.print("Starting crawler for: " + source);
+        logger.debug("Starting crawler for: " + source);
 
         threads.stream().forEach(p -> {
             p.setDaemon(true);
@@ -51,7 +54,7 @@ public class CatalogSystemCrawler implements Runnable {
 
         handleCatalog(rootCatalog);
 
-        System.out.print("Stopped crawler for: " + source);
+        logger.debug("Stopped crawler for: " + source);
     }
 
     private void handleCatalog(SearchObject rootCatalog) {
@@ -66,7 +69,7 @@ public class CatalogSystemCrawler implements Runnable {
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
                 return;
             }
         }
@@ -111,7 +114,7 @@ public class CatalogSystemCrawler implements Runnable {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
         }

@@ -5,6 +5,8 @@ import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
@@ -17,6 +19,7 @@ import java.util.List;
  * Created by ruslan on 27.06.2015.
  */
 public class FileCatalogSystemProvider implements CatalogSystemProvider {
+    private static Logger logger = LoggerFactory.getLogger(FileCatalogSystemProvider.class);
     private final FileSkipProvider fileSkipper;
 
     @Autowired
@@ -91,7 +94,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
                 try {
                     return new FileSearchObject(file);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
 

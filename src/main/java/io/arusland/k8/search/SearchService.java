@@ -14,6 +14,8 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.node.NodeBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -29,6 +31,7 @@ import static org.elasticsearch.search.aggregations.AggregationBuilders.*;
  */
 @Service
 public class SearchService {
+    private static Logger logger = LoggerFactory.getLogger(SearchService.class);
     private static final String OBJECT_INDEX = "objects";
     private static final String OBJECT_FILE = "file";
     private static final int SEARCH_ROWS = 25;
@@ -37,7 +40,7 @@ public class SearchService {
     public SearchService() {
         NodeBuilder builder = NodeBuilder.nodeBuilder().local(true);
 
-        builder.settings().put("path.data", "elasticdata");
+        builder.settings().put("path.data", "elastictestdata");
 
         client = builder.node().client();
 
@@ -45,12 +48,12 @@ public class SearchService {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
     }
 
     public void index(SearchObject object) {
-        System.out.println("INDEXING: " + object);
+        logger.debug("INDEXING: " + object);
 
         Map<String, Object> doc = object.toDoc();
 
@@ -87,7 +90,7 @@ public class SearchService {
                 .execute()
                 .actionGet();
 
-        System.out.println("All file objects count: " + respCount.getCount());
+        logger.debug("All file objects count: " + respCount.getCount());
 
         return result;
     }
