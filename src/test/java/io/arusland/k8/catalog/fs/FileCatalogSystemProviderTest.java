@@ -5,6 +5,7 @@ import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import junit.framework.TestCase;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -16,14 +17,14 @@ public class FileCatalogSystemProviderTest extends TestCase {
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\");
 
-        List<SearchObject> objects = provider.getObjects(source);
+        SearchObject rootObject = provider.getCatalog(source);
 
-        assertEquals(1, objects.size());
-        assertEquals(0, objects.get(0).getSize());
+        assertTrue(rootObject.isCatalog());
+        assertEquals(0, rootObject.getSize());
 
-        System.out.println(objects.get(0));
+        System.out.println(rootObject);
 
-        objects = provider.getObjects(objects.get(0));
+        Iterable<SearchObject> objects = provider.getObjects(rootObject);
 
         for (SearchObject object : objects){
             System.out.println("\t" + object);

@@ -9,9 +9,9 @@ import java.util.List;
  * Created by ruslan on 27.06.2015.
  */
 public interface CatalogSystemProvider {
-    SourceType getSourceType();
+    SourceType getType();
 
-    List<SearchObject> getObjects(SearchSource source);
+    SearchObject getCatalog(SearchSource source);
 
-    List<SearchObject> getObjects(SearchObject catalog);
+    Iterable<SearchObject> getObjects(SearchObject catalog);
 }

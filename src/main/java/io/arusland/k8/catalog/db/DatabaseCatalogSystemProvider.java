@@ -13,17 +13,17 @@ import java.util.List;
  */
 public class DatabaseCatalogSystemProvider implements CatalogSystemProvider {
     @Override
-    public SourceType getSourceType() {
+    public SourceType getType() {
         return SourceType.Database;
     }
 
     @Override
-    public List<SearchObject> getObjects(SearchSource source) {
-        return new LinkedList<>();
+    public SearchObject getCatalog(SearchSource source) {
+        return null;
     }
 
     @Override
-    public List<SearchObject> getObjects(SearchObject catalog) {
+    public Iterable<SearchObject> getObjects(SearchObject catalog) {
         return new LinkedList<>();
     }
 }

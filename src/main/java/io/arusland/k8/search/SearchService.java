@@ -16,7 +16,8 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import static org.elasticsearch.index.query.FilterBuilders.*;
@@ -39,9 +40,18 @@ public class SearchService {
         builder.settings().put("path.data", "elasticdata");
 
         client = builder.node().client();
+
+        // TODO: if remove next lines tests fail with "Failed to execute phase [query], all shards failed"
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void index(SearchObject object) {
+        System.out.println("INDEXING: " + object);
+
         Map<String, Object> doc = object.toDoc();
 
         IndexResponse response = client.prepareIndex(OBJECT_INDEX, OBJECT_FILE, object.getId())
@@ -50,7 +60,7 @@ public class SearchService {
                 .actionGet();
     }
 
-    public void search(String searchText) {
+    public List<SearchObject> search(String searchText) {
         SearchRequestBuilder request = client.prepareSearch(OBJECT_INDEX);
         request.setTypes(OBJECT_FILE);
         request.addFields(FileSearchObject.getFields());
@@ -64,8 +74,11 @@ public class SearchService {
         SearchResponse resp = request.execute().actionGet();
         SearchHits hits = resp.getHits();
 
-        for (SearchHit hit : hits){
+        List<SearchObject> result = new LinkedList<>();
+
+        for (SearchHit hit : hits) {
             SearchObject obj = ResultParser.parse(hit);
+            result.add(obj);
             System.out.println(obj);
         }
 
@@ -75,6 +88,8 @@ public class SearchService {
                 .actionGet();
 
         System.out.println("All file objects count: " + respCount.getCount());
+
+        return result;
     }
 
     private QueryBuilder processQueryString(String queryText) {

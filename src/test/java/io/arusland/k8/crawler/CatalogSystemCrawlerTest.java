@@ -1,34 +1,29 @@
-package io.arusland.k8.search;
+package io.arusland.k8.crawler;
 
-import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.FileCatalogSystemProvider;
 import io.arusland.k8.catalog.fs.FileSkipProvider;
+import io.arusland.k8.search.SearchService;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import junit.framework.TestCase;
 
-import java.util.Iterator;
-
 /**
- * Created by ruslan on 27.06.2015.
+ * Created by ruslan on 28.06.2015.
  */
-public class SearchServiceTest extends TestCase {
-    public void test(){
+public class CatalogSystemCrawlerTest extends TestCase {
+    private static final int THREAD_COUNT = 5;
+
+    public void test() throws InterruptedException {
+
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, "d:\\WORK\\MyProjects\\k8\\src\\test\\data\\");
         SearchService service = new SearchService();
+        CatalogSystemCrawler crawler = new CatalogSystemCrawler(source, provider, service, THREAD_COUNT);
+        Thread thread = new Thread(crawler);
 
-        SearchObject rootObject = provider.getCatalog(source);
-        Iterator<SearchObject> files = provider.getObjects(rootObject).iterator();
-        int count = 0;
-
-        while (files.hasNext()) {
-            service.index(files.next());
-            count++;
-        }
-
-        assertEquals(2, count);
+        thread.start();
+        thread.join();
 
         service.search("test");
     }

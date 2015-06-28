@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,47 +25,77 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
     }
 
     @Override
-    public SourceType getSourceType() {
+    public SourceType getType() {
         return SourceType.FileSystem;
     }
 
+    /**
+     * Returns root catalog by source
+     */
     @Override
-    public List<SearchObject> getObjects(SearchSource source) {
+    public SearchObject getCatalog(SearchSource source) {
         Validate.notNull(source, "source");
         Validate.isTrue(source.getType() == SourceType.FileSystem, "source must be SourceType.FileSystem");
 
         final File file = new File(source.getPath());
-        final LinkedList<SearchObject> result = new LinkedList<>();
 
         try {
-            result.add(new FileSearchObject(file));
+            return new FileSearchObject(file);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-
-        return result;
     }
 
     @Override
-    public List<SearchObject> getObjects(SearchObject catalog) {
-        Validate.isInstanceOf(FileSearchObject.class, catalog);
-        Validate.isTrue(catalog.isCatalog(), "Method supports only catalog objects");
+    public Iterable<SearchObject> getObjects(SearchObject catalog) {
+        FileObjectIterator iterator = new FileObjectIterator(catalog);
 
-        final File file = ((FileSearchObject) catalog).getFile();
-        final LinkedList<SearchObject> result = new LinkedList<>();
+        return new Iterable<SearchObject>() {
+            @Override
+            public Iterator<SearchObject> iterator() {
+                return iterator;
+            }
+        };
+    }
 
-        if (file.exists()) {
-            final File[] files = file.listFiles(file1 -> !fileSkipper.test(file1));
+    private class FileObjectIterator implements Iterator<SearchObject> {
+        private final File[] files;
+        private int currentIndex = -1;
 
-            for (File fileChild : files) {
+        public FileObjectIterator(SearchObject catalog) {
+            Validate.isInstanceOf(FileSearchObject.class, catalog);
+            Validate.isTrue(catalog.isCatalog(), "Method supports only catalog objects");
+
+            File file = ((FileSearchObject) catalog).getFile();
+            this.files = file.listFiles(file1 -> !fileSkipper.test(file1));
+        }
+
+        @Override
+        public boolean hasNext() {
+            return (currentIndex + 1) < files.length;
+        }
+
+        @Override
+        public SearchObject next() {
+            File file = null;
+
+            synchronized (files) {
+                currentIndex++;
+
+                if (currentIndex < files.length) {
+                    file = files[currentIndex];
+                }
+            }
+
+            if (file != null) {
                 try {
-                    result.add(new FileSearchObject(fileChild));
+                    return new FileSearchObject(file);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-        }
 
-        return result;
+            return null;
+        }
     }
 }

@@ -12,6 +12,7 @@ public class SearchSource {
     private final SourceType type;
     private final String path;
     private final List<String> owners = new LinkedList<>();
+    private String lastActiveCatalog;
 
     public SearchSource(SourceType type, String path) {
         this.type = Validate.notNull(type);
@@ -32,5 +33,23 @@ public class SearchSource {
 
     public boolean isPublic(){
         return owners.isEmpty();
+    }
+
+    public String getLastActiveCatalog() {
+        return lastActiveCatalog;
+    }
+
+    public void setLastActiveCatalog(String lastActiveCatalog) {
+        this.lastActiveCatalog = lastActiveCatalog;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchSource{" +
+                "type=" + type +
+                ", path='" + path + '\'' +
+                ", owners=" + owners +
+                ", lastActiveCatalog='" + lastActiveCatalog + '\'' +
+                '}';
     }
 }
