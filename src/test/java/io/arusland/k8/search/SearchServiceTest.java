@@ -26,8 +26,10 @@ public class SearchServiceTest extends TestCase {
                 .filter(p -> !p.isCatalog())
                 .collect(Collectors.toList());
 
-        assertEquals(1, files.size());
+        assertEquals(2, files.size());
 
-        service.index(files.get(0));
+        files.forEach(p -> service.index(p));
+
+        service.search("test");
     }
 }

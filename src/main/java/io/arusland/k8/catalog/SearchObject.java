@@ -3,9 +3,6 @@ package io.arusland.k8.catalog;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
 import org.apache.commons.lang3.Validate;
-import org.elasticsearch.common.joda.time.format.DateTimeFormatter;
-import org.elasticsearch.common.joda.time.format.ISODateTimeFormat;
-import org.elasticsearch.search.SearchHitField;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -115,23 +112,23 @@ public class SearchObject {
         return isCatalog;
     }
 
-    public String[] getFields() {
+    public static String[] getFields() {
         return FIELDS;
     }
 
     public Map<String, Object> toDoc(){
         Map<String, Object> doc = new HashMap<>();
 
-        doc.put(NAME, name);
-        doc.put(PATH, path);
-        doc.put(SIZE, size);
-        doc.put(TYPE, objectType);
-        doc.put(HASH, hash);
-        doc.put(ICON, icon);
-        doc.put(IS_CATALOG, isCatalog);
-        doc.put(CONTENT, content);
-        doc.put(CREATE_DATE, new Timestamp(createDate.getTime()));
-        doc.put(MODIFY_DATE, new Timestamp(modifyDate.getTime()));
+        doc.put(NAME, getName());
+        doc.put(PATH, getPath());
+        doc.put(SIZE, getSize());
+        doc.put(TYPE, getObjectType());
+        doc.put(HASH, getHash());
+        doc.put(ICON, getIcon());
+        doc.put(IS_CATALOG, isCatalog());
+        doc.put(CONTENT, getContent());
+        doc.put(CREATE_DATE, new Timestamp(getCreateDate().getTime()));
+        doc.put(MODIFY_DATE, new Timestamp(getModifyDate().getTime()));
 
         return doc;
     }
@@ -139,16 +136,16 @@ public class SearchObject {
     @Override
     public String toString() {
         return "SearchObject{" +
-                "name='" + name + '\'' +
-                ", size=" + size +
-                ", hash='" + hash + '\'' +
-                ", sourceType=" + sourceType +
-                ", objectType=" + objectType +
-                ", icon='" + icon + '\'' +
-                ", isCatalog=" + isCatalog +
-                ", path='" + path + '\'' +
-                ", createDate=" + createDate +
-                ", modifyDate=" + modifyDate +
+                "name='" + getName() + '\'' +
+                ", size=" + getSize() +
+                ", hash='" + getHash() + '\'' +
+                ", sourceType=" + getSourceType() +
+                ", objectType=" + getObjectType() +
+                ", icon='" + getIcon() + '\'' +
+                ", isCatalog=" + isCatalog() +
+                ", path='" + getPath() + '\'' +
+                ", createDate=" + getCreateDate() +
+                ", modifyDate=" + getModifyDate() +
                 '}';
     }
 }
