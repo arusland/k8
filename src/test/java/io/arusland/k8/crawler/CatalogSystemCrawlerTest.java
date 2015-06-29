@@ -35,22 +35,22 @@ public class CatalogSystemCrawlerTest extends TestCase {
 
         List<SearchObject> objects = service.getIndexedObjects();
         assertEquals(8, objects.size());
-        assertEquals("data", objects.get(0).getName());
-        assertEquals("folder1", objects.get(1).getName());
-        assertEquals("folder2", objects.get(2).getName());
-        assertEquals("test1.txt", objects.get(3).getName());
-        assertEquals("test2.txt", objects.get(4).getName());
-        assertEquals("folder2.txt", objects.get(5).getName());
-        assertEquals("folder2_1", objects.get(6).getName());
-        assertEquals("folder2_1.avi", objects.get(7).getName());
+        assertTrue(contains(objects, "data"));
+        assertTrue(contains(objects, "folder1"));
+        assertTrue(contains(objects, "folder2"));
+        assertTrue(contains(objects, "test1.txt"));
+        assertTrue(contains(objects, "test2.txt"));
+        assertTrue(contains(objects, "folder2.txt"));
+        assertTrue(contains(objects, "folder2_1"));
+        assertTrue(contains(objects, "folder2_1.avi"));
 
         final List<String> paths = pathHandler.getPaths();
         assertEquals(5, paths.size());
-        assertEquals(TestConfig.TEST_DATA_PATH, paths.get(0));
-        assertEquals(TestConfig.TEST_DATA_PATH + "\\folder1", paths.get(1));
-        assertEquals(TestConfig.TEST_DATA_PATH + "\\folder2", paths.get(2));
-        assertEquals(TestConfig.TEST_DATA_PATH + "\\folder2\\folder2_1", paths.get(3));
-        assertEquals(null, paths.get(4));
+        assertTrue(paths.contains(TestConfig.TEST_DATA_PATH));
+        assertTrue(paths.contains(TestConfig.TEST_DATA_PATH + "\\folder1"));
+        assertTrue(paths.contains(TestConfig.TEST_DATA_PATH + "\\folder2"));
+        assertTrue(paths.contains(TestConfig.TEST_DATA_PATH + "\\folder2\\folder2_1"));
+        assertTrue(paths.contains(null));
     }
 
     public void testSourceWithLastActiveCatalogPath() throws InterruptedException {
@@ -70,17 +70,22 @@ public class CatalogSystemCrawlerTest extends TestCase {
 
         final List<SearchObject> objects = service.getIndexedObjects();
         assertEquals(6, objects.size());
-        assertEquals("folder2", objects.get(0).getName());
-        assertEquals("folder2.txt", objects.get(1).getName());
-        assertEquals("folder2_1", objects.get(2).getName());
-        assertEquals("folder2_1.avi", objects.get(3).getName());
-        assertEquals("test1.txt", objects.get(4).getName());
-        assertEquals("test2.txt", objects.get(5).getName());
+
+        assertTrue(contains(objects, "folder2"));
+        assertTrue(contains(objects, "folder2.txt"));
+        assertTrue(contains(objects, "folder2_1"));
+        assertTrue(contains(objects, "folder2_1.avi"));
+        assertTrue(contains(objects, "test1.txt"));
+        assertTrue(contains(objects, "test2.txt"));
 
         final List<String> paths = pathHandler.getPaths();
         assertEquals(3, paths.size());
-        assertEquals(TestConfig.TEST_DATA_PATH + "\\folder2", paths.get(0));
-        assertEquals(TestConfig.TEST_DATA_PATH + "\\folder2\\folder2_1", paths.get(1));
-        assertEquals(null, paths.get(2));
+        assertTrue(paths.contains(TestConfig.TEST_DATA_PATH + "\\folder2"));
+        assertTrue(paths.contains(TestConfig.TEST_DATA_PATH + "\\folder2\\folder2_1"));
+        assertTrue(paths.contains(null));
+    }
+
+    private static boolean contains(List<SearchObject> objects, String name) {
+        return objects.stream().anyMatch(p -> p.getName().equals(name));
     }
 }

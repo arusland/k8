@@ -1,5 +1,6 @@
 package io.arusland.k8.catalog.fs;
 
+import io.arusland.k8.TestConfig;
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
@@ -16,7 +17,7 @@ public class FileCatalogSystemProviderTest extends TestCase {
     public void testProvider() {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
-        final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\");
+        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
 
         SearchObject rootObject = provider.getCatalog(source);
 
