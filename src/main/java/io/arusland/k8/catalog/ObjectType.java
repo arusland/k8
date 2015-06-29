@@ -9,6 +9,7 @@ public enum ObjectType {
     FILE_PDF,
     FILE_DOC,
     FILE_SOURCE_CODE,
+    FILE_XML,
 
     DB_TABLE,
     DB_STORED_PROCEDURE,

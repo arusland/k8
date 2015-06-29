@@ -51,6 +51,11 @@ Catalog system supports walking through objects from the sources.
 * FileCatalogSystemProvider
 * DatabaseCatalogSystemProvider
 
+== Extra Features
+* Surrogate resource - resource which not exists in fact, but can be calculated. (e.g. Statistics page about table)
+* Source binding - every search source can have bidning point (e.g. http://site.com/srv1/bigdb.tables.dbo.USERS where srv1 is sourse binding)
+
+
 
 
 
