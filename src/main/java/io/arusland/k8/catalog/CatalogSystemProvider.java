@@ -16,4 +16,8 @@ public interface CatalogSystemProvider {
     Iterable<SearchObject> getObjects(SearchObject catalog);
 
     SearchObject getParent(SearchObject catalog);
+
+    SearchObject getObject(PropertyGetter props);
+
+    boolean supports(ObjectType type);
 }

@@ -1,6 +1,8 @@
 package io.arusland.k8.catalog.db;
 
 import io.arusland.k8.catalog.CatalogSystemProvider;
+import io.arusland.k8.catalog.ObjectType;
+import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
@@ -29,5 +31,15 @@ public class DatabaseCatalogSystemProvider implements CatalogSystemProvider {
     @Override
     public SearchObject getParent(SearchObject catalog) {
         return null;
+    }
+
+    @Override
+    public SearchObject getObject(PropertyGetter props) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean supports(ObjectType type) {
+        return type.toString().startsWith("DB_");
     }
 }

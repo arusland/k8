@@ -2,6 +2,7 @@ package io.arusland.k8.search;
 
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.FileSearchObject;
+import org.apache.commons.lang3.Validate;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -36,12 +37,13 @@ public class ElasticSearchService implements SearchService {
     private static final String OBJECT_FILE = "file";
     private static final int SEARCH_ROWS = 25;
     private final Client client;
+    private final ResultParser resultParser;
 
-    public ElasticSearchService() {
+    public ElasticSearchService(ResultParser resultParser) {
+        this.resultParser = Validate.notNull(resultParser);
+
         NodeBuilder builder = NodeBuilder.nodeBuilder().local(true);
-
         builder.settings().put("path.data", "elastictestdata");
-
         client = builder.node().client();
 
         // TODO: if remove next lines tests fail with "Failed to execute phase [query], all shards failed"
@@ -82,7 +84,7 @@ public class ElasticSearchService implements SearchService {
         List<SearchObject> result = new LinkedList<>();
 
         for (SearchHit hit : hits) {
-            SearchObject obj = ResultParser.parse(hit);
+            SearchObject obj = resultParser.parse(hit);
             result.add(obj);
             logger.debug("FOUND: " + obj);
         }

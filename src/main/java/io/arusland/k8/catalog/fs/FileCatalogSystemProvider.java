@@ -1,7 +1,10 @@
 package io.arusland.k8.catalog.fs;
 
 import io.arusland.k8.catalog.CatalogSystemProvider;
+import io.arusland.k8.catalog.ObjectType;
+import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
+import io.arusland.k8.catalog.fs.format.TextFileSearchObject;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import org.apache.commons.lang3.Validate;
@@ -58,7 +61,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
             if (file != null) {
                 try {
-                    return new FileSearchObject(file);
+                    return createObject(file);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -66,7 +69,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         }
 
         try {
-            return new FileSearchObject(rootFile);
+            return createObject(rootFile);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -88,18 +91,46 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
     public SearchObject getParent(SearchObject catalog) {
         Validate.isTrue(catalog.getSourceType() == SourceType.FileSystem, "source must be SourceType.FileSystem");
 
-        FileSearchObject object = (FileSearchObject)catalog;
+        FileSearchObject object = (FileSearchObject) catalog;
         File parent = object.getFile().getParentFile();
 
-        if (parent != null){
+        if (parent != null) {
             try {
-                return new FileSearchObject(parent);
+                return createObject(parent);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
         }
 
         return null;
+    }
+
+    @Override
+    public SearchObject getObject(PropertyGetter props) {
+        ObjectType type = props.getObjectType();
+
+        switch (type) {
+            case FILE_TEXT:
+                return new TextFileSearchObject(props);
+            default:
+                return new FileSearchObject(props);
+        }
+    }
+
+    @Override
+    public boolean supports(ObjectType type) {
+        return type.toString().startsWith("FILE_");
+    }
+
+    private FileSearchObject createObject(File file) throws IOException {
+        ObjectType type = FileTypeHelper.getObjectType(file);
+
+        switch (type) {
+            case FILE_TEXT:
+                return new TextFileSearchObject(file);
+            default:
+                return new FileSearchObject(file);
+        }
     }
 
     private class FileObjectIterator implements Iterator<SearchObject> {
@@ -133,7 +164,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
             if (file != null) {
                 try {
-                    return new FileSearchObject(file);
+                    return createObject(file);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }

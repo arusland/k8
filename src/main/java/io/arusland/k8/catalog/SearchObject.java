@@ -60,7 +60,7 @@ public class SearchObject {
 
     public SearchObject(PropertyGetter fields, SourceType sourceType){
         this(fields.getValue(NAME), fields.getValue(PATH), fields.getLong(SIZE),
-                fields.getValue(HASH), fields.getValue(CONTENT), sourceType, fields.getObjectType(TYPE),
+                fields.getValue(HASH), fields.getValue(CONTENT), sourceType, fields.getObjectType(),
                 fields.getValue(ICON), fields.getDate(CREATE_DATE), fields.getDate(MODIFY_DATE),
                 fields.getValue(IS_CATALOG));
     }

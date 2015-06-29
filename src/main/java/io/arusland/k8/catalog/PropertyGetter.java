@@ -36,7 +36,7 @@ public class PropertyGetter {
         return Long.valueOf(val);
     }
 
-    public ObjectType getObjectType(String type) {
-        return ObjectType.valueOf(getValue(type));
+    public ObjectType getObjectType() {
+        return ObjectType.valueOf(getValue(SearchObject.TYPE));
     }
 }

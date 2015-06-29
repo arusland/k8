@@ -8,6 +8,7 @@ import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import junit.framework.TestCase;
 
+import java.util.Arrays;
 import java.util.Iterator;
 
 /**
@@ -18,7 +19,8 @@ public class SearchServiceTest extends TestCase {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
-        SearchService service = new ElasticSearchService();
+        ResultParser resultParser = new ResultParser(Arrays.asList(provider));
+        SearchService service = new ElasticSearchService(resultParser);
 
         SearchObject rootObject = provider.getCatalog(source);
         Iterator<SearchObject> files = provider.getObjects(rootObject).iterator();
