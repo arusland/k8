@@ -1,7 +1,7 @@
 package io.arusland.k8.search;
 
+import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
-import io.arusland.k8.catalog.fs.FileSearchObject;
 import org.apache.commons.lang3.Validate;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -62,6 +62,7 @@ public class ElasticSearchService implements SearchService {
 
         IndexResponse response = client.prepareIndex(OBJECT_INDEX, OBJECT_FILE, object.getId())
                 .setSource(doc)
+                .setRefresh(true)
                 .execute()
                 .actionGet();
     }
@@ -70,7 +71,7 @@ public class ElasticSearchService implements SearchService {
     public List<SearchObject> search(String searchText) {
         SearchRequestBuilder request = client.prepareSearch(OBJECT_INDEX);
         request.setTypes(OBJECT_FILE);
-        request.addFields(FileSearchObject.getFields());
+        request.addFields(PropertyGetter.ALL_FIELDS);
         request.setSize(SEARCH_ROWS);
         request.setFrom(0);
 

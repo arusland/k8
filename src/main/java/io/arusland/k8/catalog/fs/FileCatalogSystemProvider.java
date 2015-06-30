@@ -5,6 +5,7 @@ import io.arusland.k8.catalog.ObjectType;
 import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.format.TextFileSearchObject;
+import io.arusland.k8.catalog.fs.format.xml.XmlFileSearchObject;
 import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import org.apache.commons.lang3.Validate;
@@ -112,6 +113,8 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         switch (type) {
             case FILE_TEXT:
                 return new TextFileSearchObject(props);
+            case FILE_XML:
+                return new XmlFileSearchObject(props);
             default:
                 return new FileSearchObject(props);
         }
@@ -128,6 +131,8 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         switch (type) {
             case FILE_TEXT:
                 return new TextFileSearchObject(file);
+            case FILE_XML:
+                return new XmlFileSearchObject(file);
             default:
                 return new FileSearchObject(file);
         }

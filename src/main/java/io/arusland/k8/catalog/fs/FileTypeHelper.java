@@ -11,6 +11,10 @@ import java.io.File;
 public class FileTypeHelper {
     @NotNull
     public static ObjectType getObjectType(File file){
+        if (file.isFile() && file.getName().toLowerCase().endsWith(".xml")){
+            return ObjectType.FILE_XML;
+        }
+
         return ObjectType.FILE_BINARY;
     }
 }

@@ -15,7 +15,7 @@ import java.util.Iterator;
  * Created by ruslan on 27.06.2015.
  */
 public class SearchServiceTest extends TestCase {
-    public void test(){
+    public void testElasticSearchService(){
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
@@ -31,7 +31,7 @@ public class SearchServiceTest extends TestCase {
             count++;
         }
 
-        assertEquals(4, count);
+        assertEquals(5, count);
 
         service.search("test");
     }
