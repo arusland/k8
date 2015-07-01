@@ -27,6 +27,7 @@
     </appender>
 -->
 
+    <logger name="org.springframework" level="INFO"/>
     <logger name="org.elasticsearch" level="WARN"/>
     <logger name="io.arusland.k8" level="DEBUG"/>
    

@@ -17,6 +17,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedList;
@@ -39,6 +40,7 @@ public class ElasticSearchService implements SearchService {
     private final Client client;
     private final ResultParser resultParser;
 
+    @Autowired
     public ElasticSearchService(ResultParser resultParser) {
         this.resultParser = Validate.notNull(resultParser);
 

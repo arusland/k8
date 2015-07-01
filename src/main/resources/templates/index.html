@@ -13,7 +13,23 @@
 </head>
 <body>
 <div class="container">
-    <h1>Index page!</h1>
+    <h1>Search page!</h1>
+
+    <form action="/" method="get" class="form-inline">
+        <input type="text" name="q" th:value="${searchText}" class="form-control"/>
+        <button type="submit" th:text="Search" class="btn btn-primary"/>
+    </form>
+
+    <div th:if="${items}">
+        Found <span th:text="${itemsCount}"></span> items
+    </div>
+
+    <table>
+        <tr th:each="item : ${items}">
+            <td><span th:text="${item.name}">name</span></td>
+            <td><span th:text="${item}">all</span></td>
+        </tr>
+    </table>
 </div>
 </body>
 </html>

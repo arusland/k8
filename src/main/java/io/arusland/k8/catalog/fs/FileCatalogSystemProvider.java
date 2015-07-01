@@ -12,6 +12,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.Iterator;
 /**
  * Created by ruslan on 27.06.2015.
  */
+@Service
 public class FileCatalogSystemProvider implements CatalogSystemProvider {
     private static Logger logger = LoggerFactory.getLogger(FileCatalogSystemProvider.class);
     private final FileSkipProvider fileSkipper;
