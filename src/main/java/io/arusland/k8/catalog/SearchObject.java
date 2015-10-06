@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by ruslan on 27.06.2015.
  */
-public class SearchObject {
+public abstract class SearchObject {
     public final static String NAME = "name";
     public final static String PATH = "path";
     public final static String SIZE = "size";
@@ -141,6 +141,8 @@ public class SearchObject {
 
         return source.getPath().toLowerCase().equals(getPath().toLowerCase());
     }
+
+    public abstract String GetSearchType();
 
     @Override
     public String toString() {

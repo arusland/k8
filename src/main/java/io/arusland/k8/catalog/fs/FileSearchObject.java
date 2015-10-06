@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
  * Created by ruslan on 27.06.2015.
  */
 public class FileSearchObject extends SearchObject {
+    private static final String OBJECT_FILE = "file";
     private final static Pattern ROOT_DRIVE = Pattern.compile("^(\\w):\\\\$");
     private final File file;
 
@@ -59,6 +60,11 @@ public class FileSearchObject extends SearchObject {
     @Override
     public Map<String, Object> toDoc() {
         return super.toDoc();
+    }
+
+    @Override
+    public String GetSearchType() {
+        return OBJECT_FILE;
     }
 
     private static Date getFileCreateTime(File file) throws IOException {

@@ -35,7 +35,6 @@ import static org.elasticsearch.search.aggregations.AggregationBuilders.*;
 public class ElasticSearchService implements SearchService {
     private static Logger logger = LoggerFactory.getLogger(ElasticSearchService.class);
     private static final String OBJECT_INDEX = "objects";
-    private static final String OBJECT_FILE = "file";
     private static final int SEARCH_ROWS = 25;
     private final Client client;
     private final ResultParser resultParser;
@@ -62,7 +61,7 @@ public class ElasticSearchService implements SearchService {
 
         Map<String, Object> doc = object.toDoc();
 
-        IndexResponse response = client.prepareIndex(OBJECT_INDEX, OBJECT_FILE, object.getId())
+        IndexResponse response = client.prepareIndex(OBJECT_INDEX, object.GetSearchType(), object.getId())
                 .setSource(doc)
                 .setRefresh(true)
                 .execute()
@@ -72,7 +71,7 @@ public class ElasticSearchService implements SearchService {
     @Override
     public List<SearchObject> search(String searchText) {
         SearchRequestBuilder request = client.prepareSearch(OBJECT_INDEX);
-        request.setTypes(OBJECT_FILE);
+        //request.setTypes(OBJECT_FILE);
         request.addFields(PropertyGetter.ALL_FIELDS);
         request.setSize(SEARCH_ROWS);
         request.setFrom(0);
@@ -93,7 +92,7 @@ public class ElasticSearchService implements SearchService {
         }
 
         CountResponse respCount = client.prepareCount(OBJECT_INDEX)
-                .setTypes(OBJECT_FILE)
+                //.setTypes(OBJECT_FILE)
                 .execute()
                 .actionGet();
 
