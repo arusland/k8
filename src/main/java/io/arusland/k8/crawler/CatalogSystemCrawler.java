@@ -98,6 +98,8 @@ public class CatalogSystemCrawler implements Runnable {
 
         setCurrentCatalogPath(null);
 
+        searchService.flush();
+
         logger.debug("Stopped crawler for: " + source);
     }
 
