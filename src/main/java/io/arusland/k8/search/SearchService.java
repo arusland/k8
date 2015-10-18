@@ -13,4 +13,6 @@ public interface SearchService {
     List<SearchObject> search(String searchText);
 
     void index(SearchObject object);
+
+    void flush();
 }

@@ -65,6 +65,11 @@ public class ElasticSearchService implements SearchService {
     }
 
     @Override
+    public void flush() {
+        client.admin().indices().prepareFlush().execute().actionGet();
+    }
+
+    @Override
     public List<SearchObject> search(SearchFilter filter) {
         SearchRequestBuilder request = client.prepareSearch(filter.getSearchIndecies());
         request.addFields(PropertyGetter.ALL_FIELDS);
@@ -85,7 +90,6 @@ public class ElasticSearchService implements SearchService {
             result.add(obj);
             logger.debug("FOUND: " + obj);
         }
-
         return result;
     }
 

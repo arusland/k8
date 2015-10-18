@@ -26,6 +26,10 @@ public class MockSearchService implements SearchService {
         indexedObjects.add(object);
     }
 
+    @Override
+    public void flush() {
+    }
+
     public List<SearchObject> getIndexedObjects() {
         return indexedObjects;
     }

@@ -35,5 +35,6 @@ public class SearchServiceTest extends TestCase {
         assertEquals(5, count);
 
         service.search("test");
+        service.flush();
     }
 }
