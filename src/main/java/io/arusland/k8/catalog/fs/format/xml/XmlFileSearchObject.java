@@ -18,7 +18,7 @@ public class XmlFileSearchObject extends TextFileSearchObject {
     public final static String TAGS = "tags";
     public final static String ATTR_NAMES = "attr_names";
     public final static String ATTR_VALUES = "attr_values";
-    private final XmlHelper helper = new XmlHelper();
+    private final XmlFileInfoExtractor helper = new XmlFileInfoExtractor();
     private final static String[] FIELDS;
 
     static {

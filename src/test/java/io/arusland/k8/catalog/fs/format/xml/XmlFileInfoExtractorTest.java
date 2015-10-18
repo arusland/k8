@@ -10,11 +10,11 @@ import java.io.File;
 /**
  * Created by ruslan on 29.06.2015.
  */
-public class XmlHelperTest extends TestCase {
-    private static Logger logger = LoggerFactory.getLogger(XmlHelperTest.class);
+public class XmlFileInfoExtractorTest extends TestCase {
+    private static Logger logger = LoggerFactory.getLogger(XmlFileInfoExtractorTest.class);
 
     public void test(){
-        XmlHelper helper = new XmlHelper();
+        XmlFileInfoExtractor helper = new XmlFileInfoExtractor();
 
         helper.load(new File(TestConfig.TEST_DATA_PATH + "\\folder3\\drivers1.xml"));
 
