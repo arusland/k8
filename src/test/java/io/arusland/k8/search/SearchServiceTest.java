@@ -22,6 +22,7 @@ public class SearchServiceTest extends TestCase {
         ResultParser resultParser = new ResultParser(Arrays.asList(provider));
         SearchService service = new ElasticSearchService(resultParser);
 
+
         SearchObject rootObject = provider.getCatalog(source);
         Iterator<SearchObject> files = provider.getObjects(rootObject).iterator();
         int count = 0;

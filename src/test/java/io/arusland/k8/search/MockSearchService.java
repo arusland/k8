@@ -12,6 +12,11 @@ public class MockSearchService implements SearchService {
     private final List<SearchObject> indexedObjects = new LinkedList<>();
 
     @Override
+    public List<SearchObject> search(SearchFilter filter) {
+        return new LinkedList<>();
+    }
+
+    @Override
     public List<SearchObject> search(String searchText) {
         return new LinkedList<>();
     }

@@ -24,9 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.elasticsearch.index.query.FilterBuilders.*;
 import static org.elasticsearch.index.query.QueryBuilders.*;
-import static org.elasticsearch.search.aggregations.AggregationBuilders.*;
 
 /**
  * Created by ruslan on 27.06.2015.
@@ -34,8 +32,6 @@ import static org.elasticsearch.search.aggregations.AggregationBuilders.*;
 @Service
 public class ElasticSearchService implements SearchService {
     private static Logger logger = LoggerFactory.getLogger(ElasticSearchService.class);
-    private static final String OBJECT_INDEX = "objects";
-    private static final int SEARCH_ROWS = 25;
     private final Client client;
     private final ResultParser resultParser;
 
@@ -61,7 +57,7 @@ public class ElasticSearchService implements SearchService {
 
         Map<String, Object> doc = object.toDoc();
 
-        IndexResponse response = client.prepareIndex(OBJECT_INDEX, object.GetSearchType(), object.getId())
+        IndexResponse response = client.prepareIndex(object.getSearchIndex(), object.getSearchType(), object.getId())
                 .setSource(doc)
                 .setRefresh(true)
                 .execute()
@@ -69,14 +65,13 @@ public class ElasticSearchService implements SearchService {
     }
 
     @Override
-    public List<SearchObject> search(String searchText) {
-        SearchRequestBuilder request = client.prepareSearch(OBJECT_INDEX);
-        //request.setTypes(OBJECT_FILE);
+    public List<SearchObject> search(SearchFilter filter) {
+        SearchRequestBuilder request = client.prepareSearch(filter.getSearchIndecies());
         request.addFields(PropertyGetter.ALL_FIELDS);
-        request.setSize(SEARCH_ROWS);
-        request.setFrom(0);
+        request.setSize(filter.getPageSize());
+        request.setFrom(filter.getStartFrom());
 
-        QueryBuilder esQuery = processQueryString(searchText);
+        QueryBuilder esQuery = processQueryString(filter.getSearchText());
 
         request.setQuery(esQuery);
 
@@ -91,14 +86,12 @@ public class ElasticSearchService implements SearchService {
             logger.debug("FOUND: " + obj);
         }
 
-        CountResponse respCount = client.prepareCount(OBJECT_INDEX)
-                //.setTypes(OBJECT_FILE)
-                .execute()
-                .actionGet();
-
-        logger.debug("All file objects count: " + respCount.getCount());
-
         return result;
+    }
+
+    @Override
+    public List<SearchObject> search(String searchText) {
+        return search(SearchFilter.createPublicSearch(searchText));
     }
 
     private QueryBuilder processQueryString(String queryText) {

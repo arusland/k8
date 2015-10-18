@@ -1,6 +1,7 @@
 package io.arusland.k8.web;
 
 import io.arusland.k8.catalog.SearchObject;
+import io.arusland.k8.search.SearchFilter;
 import io.arusland.k8.search.SearchService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class MainController {
 
         if (StringUtils.isNotBlank(text)){
             text = text.trim();
-            List<SearchObject> items = searchService.search(text);
+            SearchFilter filter = SearchFilter.createPublicSearch(text);
+            List<SearchObject> items = searchService.search(filter);
 
             view.addObject("items", items);
             view.addObject("searchText", text);

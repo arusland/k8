@@ -8,6 +8,8 @@ import java.util.List;
  * Created by ruslan on 28.06.2015.
  */
 public interface SearchService {
+    List<SearchObject> search(SearchFilter filter);
+
     List<SearchObject> search(String searchText);
 
     void index(SearchObject object);

@@ -25,6 +25,7 @@ public abstract class SearchObject {
     public final static String CONTENT = "content";
     public final static String CREATE_DATE = "create_date";
     public final static String MODIFY_DATE = "modify_date";
+    public final static String DEFAULT_INDEX = "default";
     protected final static String[] FIELDS = Arrays.asList(NAME, PATH, SIZE, TYPE,
             HASH, ICON, IS_CATALOG, CONTENT, CREATE_DATE, MODIFY_DATE).toArray(new String[10]);
 
@@ -142,7 +143,11 @@ public abstract class SearchObject {
         return source.getPath().toLowerCase().equals(getPath().toLowerCase());
     }
 
-    public abstract String GetSearchType();
+    public abstract String getSearchType();
+
+    public String getSearchIndex() {
+        return DEFAULT_INDEX;
+    }
 
     @Override
     public String toString() {

@@ -63,7 +63,7 @@ public class FileSearchObject extends SearchObject {
     }
 
     @Override
-    public String GetSearchType() {
+    public String getSearchType() {
         return OBJECT_FILE;
     }
 
