@@ -1,6 +1,7 @@
 package io.arusland.k8.catalog;
 
 import io.arusland.k8.source.SearchSource;
+import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
 import org.apache.commons.lang3.Validate;
@@ -25,7 +26,6 @@ public abstract class SearchObject {
     public final static String CONTENT = "content";
     public final static String CREATE_DATE = "create_date";
     public final static String MODIFY_DATE = "modify_date";
-    public final static String DEFAULT_INDEX = "default";
     protected final static String[] FIELDS = Arrays.asList(NAME, PATH, SIZE, TYPE,
             HASH, ICON, IS_CATALOG, CONTENT, CREATE_DATE, MODIFY_DATE).toArray(new String[10]);
 
@@ -41,11 +41,14 @@ public abstract class SearchObject {
     private final boolean isCatalog;
     private final Date createDate;
     private final Date modifyDate;
+    private final SourceOwner owner;
+
 
     public SearchObject(String name, String path, long size, String hash, String content,
                         SourceType sourceType, ObjectType objectType, String icon,
-                        Date createDate, Date modifiedDate, boolean isCatalog) {
+                        Date createDate, Date modifiedDate, boolean isCatalog, SourceOwner owner) {
         this.isCatalog = isCatalog;
+        this.owner = Validate.notNull(owner);
         this.name = Validate.notBlank(name);
         this.path = Validate.notBlank(path);
         this.id = HashUtils.sha1Hex(path.toLowerCase());
@@ -59,11 +62,11 @@ public abstract class SearchObject {
         this.modifyDate = Validate.notNull(modifiedDate);
     }
 
-    public SearchObject(PropertyGetter fields, SourceType sourceType){
+    public SearchObject(PropertyGetter fields, SourceType sourceType, SourceOwner owner){
         this(fields.getValue(NAME), fields.getValue(PATH), fields.getLong(SIZE),
                 fields.getValue(HASH), fields.getValue(CONTENT), sourceType, fields.getObjectType(),
                 fields.getValue(ICON), fields.getDate(CREATE_DATE), fields.getDate(MODIFY_DATE),
-                fields.getValue(IS_CATALOG));
+                fields.getValue(IS_CATALOG), owner);
     }
 
     public String getId() {
@@ -118,6 +121,10 @@ public abstract class SearchObject {
         return FIELDS;
     }
 
+    public SourceOwner getOwner() {
+        return owner;
+    }
+
     public Map<String, Object> toDoc(){
         Map<String, Object> doc = new HashMap<>();
 
@@ -146,7 +153,7 @@ public abstract class SearchObject {
     public abstract String getSearchType();
 
     public String getSearchIndex() {
-        return DEFAULT_INDEX;
+        return SourceOwner.DEFAULT.getName();
     }
 
     @Override

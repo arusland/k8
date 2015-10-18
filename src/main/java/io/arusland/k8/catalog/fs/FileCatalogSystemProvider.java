@@ -7,6 +7,7 @@ import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.format.TextFileSearchObject;
 import io.arusland.k8.catalog.fs.format.xml.XmlFileSearchObject;
 import io.arusland.k8.source.SearchSource;
+import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ import java.util.Iterator;
  */
 @Service
 public class FileCatalogSystemProvider implements CatalogSystemProvider {
-    private static Logger logger = LoggerFactory.getLogger(FileCatalogSystemProvider.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileCatalogSystemProvider.class);
     private final FileSkipProvider fileSkipper;
 
     @Autowired
@@ -64,7 +65,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
             if (file != null) {
                 try {
-                    return createObject(file);
+                    return createObject(file, source.getOwner());
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -72,7 +73,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         }
 
         try {
-            return createObject(rootFile);
+            return createObject(rootFile, source.getOwner());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -80,7 +81,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
     @Override
     public Iterable<SearchObject> getObjects(SearchObject catalog) {
-        FileObjectIterator iterator = new FileObjectIterator(catalog);
+        FileObjectIterator iterator = new FileObjectIterator(catalog, catalog.getOwner());
 
         return new Iterable<SearchObject>() {
             @Override
@@ -99,7 +100,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
         if (parent != null) {
             try {
-                return createObject(parent);
+                return createObject(parent, catalog.getOwner());
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
@@ -127,29 +128,31 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         return type.toString().startsWith("FILE_");
     }
 
-    private FileSearchObject createObject(File file) throws IOException {
+    private FileSearchObject createObject(File file, SourceOwner owner) throws IOException {
         ObjectType type = FileTypeHelper.getObjectType(file);
 
         switch (type) {
             case FILE_TEXT:
-                return new TextFileSearchObject(file);
+                return new TextFileSearchObject(file, owner);
             case FILE_XML:
-                return new XmlFileSearchObject(file);
+                return new XmlFileSearchObject(file, owner);
             default:
-                return new FileSearchObject(file);
+                return new FileSearchObject(file, owner);
         }
     }
 
     private class FileObjectIterator implements Iterator<SearchObject> {
         private final File[] files;
+        private final SourceOwner owner;
         private int currentIndex;
 
-        public FileObjectIterator(SearchObject catalog) {
+        public FileObjectIterator(SearchObject catalog, SourceOwner owner) {
             Validate.isInstanceOf(FileSearchObject.class, catalog);
             Validate.isTrue(catalog.isCatalog(), "Method supports only catalog objects");
 
             File file = ((FileSearchObject) catalog).getFile();
             this.files = file.listFiles(file1 -> !fileSkipper.test(file1));
+            this.owner = Validate.notNull(owner);
         }
 
         @Override
@@ -171,7 +174,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
             if (file != null) {
                 try {
-                    return createObject(file);
+                    return createObject(file, owner);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }

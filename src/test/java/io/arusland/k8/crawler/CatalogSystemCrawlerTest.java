@@ -8,6 +8,7 @@ import io.arusland.k8.search.ElasticSearchService;
 import io.arusland.k8.search.MockSearchService;
 import io.arusland.k8.search.ResultParser;
 import io.arusland.k8.source.SearchSource;
+import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import junit.framework.TestCase;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ public class CatalogSystemCrawlerTest extends TestCase {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final MockCurrentPathChangedHandler pathHandler = new MockCurrentPathChangedHandler();
-        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
+        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH, SourceOwner.DEFAULT);
         final MockSearchService service = new MockSearchService();
         final CatalogSystemCrawler crawler = new CatalogSystemCrawler(source, provider,
                 service, pathHandler, THREAD_COUNT);
@@ -64,7 +65,7 @@ public class CatalogSystemCrawlerTest extends TestCase {
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final MockCurrentPathChangedHandler pathHandler = new MockCurrentPathChangedHandler();
         final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH,
-                TestConfig.TEST_DATA_PATH + "\\folder2\\");
+                TestConfig.TEST_DATA_PATH + "\\folder2\\", SourceOwner.DEFAULT);
 
         final MockSearchService service = new MockSearchService();
         final CatalogSystemCrawler crawler = new CatalogSystemCrawler(source, provider,
@@ -98,7 +99,7 @@ public class CatalogSystemCrawlerTest extends TestCase {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final MockCurrentPathChangedHandler pathHandler = new MockCurrentPathChangedHandler();
-        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
+        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH, SourceOwner.DEFAULT);
         final ResultParser resultParser = new ResultParser(Arrays.asList(provider));
         final ElasticSearchService service = new ElasticSearchService(resultParser);
         final CatalogSystemCrawler crawler = new CatalogSystemCrawler(source, provider,

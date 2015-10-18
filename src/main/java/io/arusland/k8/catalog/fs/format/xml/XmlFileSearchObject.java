@@ -3,6 +3,7 @@ package io.arusland.k8.catalog.fs.format.xml;
 import io.arusland.k8.catalog.ObjectType;
 import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.fs.format.TextFileSearchObject;
+import io.arusland.k8.source.SourceOwner;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,8 @@ public class XmlFileSearchObject extends TextFileSearchObject {
         FIELDS = arr.toArray(new String[arr.size()]);
     }
 
-    public XmlFileSearchObject(File file) throws IOException {
-        super(file);
+    public XmlFileSearchObject(File file, SourceOwner owner) throws IOException {
+        super(file, owner);
         helper.load(file);
     }
 

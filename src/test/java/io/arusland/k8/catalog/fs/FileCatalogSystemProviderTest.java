@@ -3,12 +3,10 @@ package io.arusland.k8.catalog.fs;
 import io.arusland.k8.TestConfig;
 import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.source.SearchSource;
+import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
 import junit.framework.TestCase;
-
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by ruslan on 27.06.2015.
@@ -17,7 +15,7 @@ public class FileCatalogSystemProviderTest extends TestCase {
     public void testProvider() {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
-        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
+        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH, SourceOwner.DEFAULT);
 
         SearchObject rootObject = provider.getCatalog(source);
 
@@ -40,7 +38,7 @@ public class FileCatalogSystemProviderTest extends TestCase {
     public void testGetCatalogNormal() {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
-        final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\");
+        final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\", SourceOwner.DEFAULT);
 
         SearchObject rootObject = provider.getCatalog(source);
 
@@ -54,7 +52,7 @@ public class FileCatalogSystemProviderTest extends TestCase {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\",
-                "C:\\windows\\");
+                "C:\\windows\\", SourceOwner.DEFAULT);
 
         SearchObject rootObject = provider.getCatalog(source);
 
@@ -68,7 +66,7 @@ public class FileCatalogSystemProviderTest extends TestCase {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\",
-                "D:\\windows\\");
+                "D:\\windows\\", SourceOwner.DEFAULT);
 
         try {
             provider.getCatalog(source);
@@ -85,7 +83,7 @@ public class FileCatalogSystemProviderTest extends TestCase {
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
         final SearchSource source = new SearchSource(SourceType.FileSystem, "c:\\",
-                "C:\\windows\\foo222\boo333");
+                "C:\\windows\\foo222\boo333", SourceOwner.DEFAULT);
 
         SearchObject rootObject = provider.getCatalog(source);
 

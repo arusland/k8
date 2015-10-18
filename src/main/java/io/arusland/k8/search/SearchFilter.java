@@ -1,7 +1,6 @@
 package io.arusland.k8.search;
 
-
-import io.arusland.k8.catalog.SearchObject;
+import io.arusland.k8.source.SourceOwner;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Arrays;
@@ -12,21 +11,27 @@ import java.util.Arrays;
 public class SearchFilter {
     public static final int DEFAULT_SEARCH_ROWS_COUNT = 25;
     private final String searchText;
-    private final String[] searchIndecies;
+    private final SourceOwner[] sourceOwners;
     private final int pageSize;
     private final int startFrom;
 
-    private SearchFilter(String searchText, int pageSize, int startFrom, String... searchIndecies) {
+    private SearchFilter(String searchText, int pageSize, int startFrom, SourceOwner... sourceOwners) {
         this.searchText = searchText;
         this.pageSize = pageSize;
         this.startFrom = startFrom;
-        this.searchIndecies = Validate.notNull(searchIndecies);
+        this.sourceOwners = Validate.notNull(sourceOwners);
 
-        Validate.isTrue(this.searchIndecies.length > 0);
+        Validate.isTrue(this.sourceOwners.length > 0);
+    }
+
+    public SourceOwner[] getSearchOwners() {
+        return sourceOwners;
     }
 
     public String[] getSearchIndecies() {
-        return searchIndecies;
+        return (String[])Arrays.stream(sourceOwners)
+                .map(p -> p.getName())
+                .toArray();
     }
 
     public String getSearchText() {
@@ -35,7 +40,7 @@ public class SearchFilter {
 
     public static SearchFilter createPublicSearch(String text){
         return new SearchFilter(text, DEFAULT_SEARCH_ROWS_COUNT, 0/*from*/,
-                SearchObject.DEFAULT_INDEX);
+                SourceOwner.DEFAULT);
     }
 
     public int getPageSize() {
@@ -50,7 +55,7 @@ public class SearchFilter {
     public String toString() {
         return "SearchFilter{" +
                 "searchText='" + searchText + '\'' +
-                ", searchIndecies=" + Arrays.toString(searchIndecies) +
+                ", sourceOwners=" + Arrays.toString(sourceOwners) +
                 ", pageSize=" + pageSize +
                 ", startFrom=" + startFrom +
                 '}';

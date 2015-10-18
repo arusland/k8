@@ -5,6 +5,7 @@ import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.FileCatalogSystemProvider;
 import io.arusland.k8.catalog.fs.FileSkipProvider;
 import io.arusland.k8.source.SearchSource;
+import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import junit.framework.TestCase;
 
@@ -18,7 +19,7 @@ public class SearchServiceTest extends TestCase {
     public void testElasticSearchService(){
         final FileSkipProvider fileSkipper = new FileSkipProvider();
         final FileCatalogSystemProvider provider = new FileCatalogSystemProvider(fileSkipper);
-        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH);
+        final SearchSource source = new SearchSource(SourceType.FileSystem, TestConfig.TEST_DATA_PATH, SourceOwner.DEFAULT);
         ResultParser resultParser = new ResultParser(Arrays.asList(provider));
         SearchService service = new ElasticSearchService(resultParser);
 
