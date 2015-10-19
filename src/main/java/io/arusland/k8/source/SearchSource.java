@@ -11,7 +11,7 @@ public class SearchSource {
     private final SourceType type;
     private final String path;
     private final SourceOwner owner;
-    private String lastActiveCatalog;
+    private final String lastActiveCatalog;
 
     public SearchSource(SourceType type, String path, String lastActiveCatalog, SourceOwner owner) {
         this.owner = Validate.notNull(owner);
@@ -56,5 +56,30 @@ public class SearchSource {
                 ", owner=" + owner +
                 ", lastActiveCatalog='" + lastActiveCatalog + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SearchSource that = (SearchSource) o;
+
+        if (lastActiveCatalog != null ? !lastActiveCatalog.equals(that.lastActiveCatalog) : that.lastActiveCatalog != null)
+            return false;
+        if (!owner.equals(that.owner)) return false;
+        if (!path.equals(that.path)) return false;
+        if (type != that.type) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + path.hashCode();
+        result = 31 * result + owner.hashCode();
+        result = 31 * result + (lastActiveCatalog != null ? lastActiveCatalog.hashCode() : 0);
+        return result;
     }
 }
