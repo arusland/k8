@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Created by ruslan on 28.06.2015.
  */
 public class CatalogSystemCrawler implements Runnable {
-    private static Logger logger = LoggerFactory.getLogger(CatalogSystemCrawler.class);
+    private static final Logger logger = LoggerFactory.getLogger(CatalogSystemCrawler.class);
     private final static int WORKER_THREAD_MIN_COUNT = 1;
     private final SearchSource source;
     private final CatalogSystemProvider catalogProvider;

@@ -17,7 +17,7 @@ import java.util.List;
  * Created by ruslan on 29.06.2015.
  */
 public class XmlFileInfoExtractor {
-    private static Logger logger = LoggerFactory.getLogger(XmlFileInfoExtractor.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlFileInfoExtractor.class);
     private final List<String> tags = new LinkedList<>();
     private final List<String> attributeNames = new LinkedList<>();
     private final List<String> attributeValues = new LinkedList<>();

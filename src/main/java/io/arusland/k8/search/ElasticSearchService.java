@@ -31,7 +31,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 public class ElasticSearchService implements SearchService {
-    private static Logger logger = LoggerFactory.getLogger(ElasticSearchService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ElasticSearchService.class);
     private final Client client;
     private final ResultParser resultParser;
 

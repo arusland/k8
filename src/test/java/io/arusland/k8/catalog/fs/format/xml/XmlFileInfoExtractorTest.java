@@ -11,7 +11,7 @@ import java.io.File;
  * Created by ruslan on 29.06.2015.
  */
 public class XmlFileInfoExtractorTest extends TestCase {
-    private static Logger logger = LoggerFactory.getLogger(XmlFileInfoExtractorTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(XmlFileInfoExtractorTest.class);
 
     public void test(){
         XmlFileInfoExtractor helper = new XmlFileInfoExtractor();

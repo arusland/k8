@@ -21,7 +21,7 @@ import java.util.List;
  * Created by ruslan on 28.06.2015.
  */
 public class CatalogSystemCrawlerTest extends TestCase {
-    private static Logger logger = LoggerFactory.getLogger(CatalogSystemCrawlerTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(CatalogSystemCrawlerTest.class);
     private static final int THREAD_COUNT = 5;
 
     public void testIndexingPureSource() throws InterruptedException {
