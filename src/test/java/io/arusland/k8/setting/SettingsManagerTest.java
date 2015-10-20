@@ -14,13 +14,13 @@ import java.util.List;
 public class SettingsManagerTest extends TestCase {
 
     public void testSave() {
-        final File file = new File(System.getProperty("java.io.tmpdir"), "_tmp_k8settings.xml");
+        final File file = SettingsManager.getInstance().getSettingsFile();
 
         if (file.exists()) {
             file.delete();
         }
 
-        final SettingsManager settings = new SettingsManager(file);
+        final SettingsManager settings = SettingsManager.getInstance();
         SearchSource source = new SearchSource(SourceType.FileSystem,
                 "c:\\path1\\path2", SourceOwner.DEFAULT);
 
@@ -42,13 +42,13 @@ public class SettingsManagerTest extends TestCase {
     }
 
     public void testSaveWithLastActivePath() {
-        final File file = new File(System.getProperty("java.io.tmpdir"), "_tmp_k8settings2.xml");
+        final File file = SettingsManager.getInstance().getSettingsFile();
 
         if (file.exists()) {
             file.delete();
         }
 
-        final SettingsManager settings = new SettingsManager(file);
+        final SettingsManager settings = SettingsManager.getInstance();
         SearchSource source = new SearchSource(SourceType.Database,
                 "c:\\path1\\path2", "c:\\path1\\path2\\path3", SourceOwner.DEFAULT);
 
@@ -67,13 +67,13 @@ public class SettingsManagerTest extends TestCase {
     }
 
     public void testSaveToExistingFile() {
-        final File file = new File(System.getProperty("java.io.tmpdir"), "_tmp_k8settings3.xml");
+        final File file = SettingsManager.getInstance().getSettingsFile();
 
         if (file.exists()) {
             file.delete();
         }
 
-        final SettingsManager settings = new SettingsManager(file);
+        final SettingsManager settings = SettingsManager.getInstance();
         SearchSource source = new SearchSource(SourceType.FileSystem,
                 "c:\\path1\\path2", SourceOwner.DEFAULT);
 

@@ -19,8 +19,10 @@ import java.util.stream.Collectors;
  */
 public class SettingsManager {
     private final File file;
+    private static SettingsManager instance;
+    private final static Object lock = new Object();
 
-    public SettingsManager(File file) {
+    private SettingsManager(File file) {
         this.file = file;
     }
 
@@ -62,6 +64,25 @@ public class SettingsManager {
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    File getSettingsFile() {
+        return file;
+    }
+
+    public static SettingsManager getInstance() {
+        if (instance == null) {
+            synchronized (lock) {
+                if (instance == null) {
+                    SettingsManager tmp = new SettingsManager(
+                            new File(System.getProperty("user.home"), "k8settings.xml"));
+
+                    instance = tmp;
+                }
+            }
+        }
+
+        return instance;
     }
 
     private static SearchSource toEntity(SearchSourceConfig source) {
