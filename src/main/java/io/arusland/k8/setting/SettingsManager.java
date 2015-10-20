@@ -18,16 +18,17 @@ import java.util.stream.Collectors;
  * Created by ruslan on 19.10.2015.
  */
 public class SettingsManager {
+    private final static String DEFAULT_FILE_NAME = "k8settings.xml";
     private final File file;
     private static SettingsManager instance;
     private final static Object lock = new Object();
 
-    private SettingsManager(File file) {
+    SettingsManager(File file) {
         this.file = file;
     }
 
     public List<SearchSource> loadSources() {
-        List<SearchSource> result = new LinkedList<>();
+        final List<SearchSource> result = new LinkedList<>();
 
         if (file.exists()) {
             try {
@@ -46,7 +47,7 @@ public class SettingsManager {
         return result;
     }
 
-    public void saveSources(List<SearchSource> sources) {
+    public void saveSources(final List<SearchSource> sources) {
         try {
             JAXBContext context = JAXBContext.newInstance(SettingsWrapper.class);
             Unmarshaller um = context.createUnmarshaller();
@@ -71,11 +72,15 @@ public class SettingsManager {
     }
 
     public static SettingsManager getInstance() {
+        return getInstance(DEFAULT_FILE_NAME);
+    }
+
+    static SettingsManager getInstance(String fileName) {
         if (instance == null) {
             synchronized (lock) {
                 if (instance == null) {
                     SettingsManager tmp = new SettingsManager(
-                            new File(System.getProperty("user.home"), "k8settings.xml"));
+                            new File(System.getProperty("user.home"), fileName));
 
                     instance = tmp;
                 }
@@ -89,12 +94,12 @@ public class SettingsManager {
         return new SearchSource(SourceType.valueOf(source.getType()),
                 source.getPath(),
                 source.getLastActiveCatalog(),
-                new SourceOwner(source.getOwner()));
+                new SourceOwner(source.getOwner()), source.getId());
     }
 
     private static SearchSourceConfig toConfig(SearchSource source) {
         return new SearchSourceConfig(source.getType().toString(), source.getPath(),
-                source.getOwner().getName(), source.getLastActiveCatalog());
+                source.getOwner().getName(), source.getLastActiveCatalog(), source.getId());
     }
 
     @XmlRootElement(name = "settings")
@@ -112,6 +117,7 @@ public class SettingsManager {
     }
 
     public static class SearchSourceConfig {
+        private Long id;
         private String type;
         private String path;
         private String owner;
@@ -120,7 +126,8 @@ public class SettingsManager {
         public SearchSourceConfig() {
         }
 
-        public SearchSourceConfig(String type, String path, String owner, String lastActiveCatalog) {
+        public SearchSourceConfig(String type, String path, String owner, String lastActiveCatalog, Long id) {
+            this.id = id;
             this.type = type;
             this.path = path;
             this.owner = owner;
@@ -157,6 +164,14 @@ public class SettingsManager {
 
         public void setLastActiveCatalog(String lastActiveCatalog) {
             this.lastActiveCatalog = lastActiveCatalog;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
         }
     }
 }
