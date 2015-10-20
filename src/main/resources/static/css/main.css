@@ -28,3 +28,11 @@ div.price{
     border-bottom: 1px dashed;
     cursor: pointer;
 }
+
+.main-container {
+    width: 85%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    padding-right: 15px;
+}
