@@ -29,16 +29,16 @@ public class SearchFilter {
     }
 
     public String[] getSearchIndecies() {
-        return (String[])Arrays.stream(sourceOwners)
+        return Arrays.stream(sourceOwners)
                 .map(p -> p.getName())
-                .toArray();
+                .toArray(size -> new String[size]);
     }
 
     public String getSearchText() {
         return searchText;
     }
 
-    public static SearchFilter createPublicSearch(String text){
+    public static SearchFilter createPublicSearch(String text) {
         return new SearchFilter(text, DEFAULT_SEARCH_ROWS_COUNT, 0/*from*/,
                 SourceOwner.DEFAULT);
     }
