@@ -16,10 +16,17 @@
     <h1>Search sources</h1>
 
     <table class="table table-bordered table-row table-hover">
+        <tr>
+            <td>Owner</td>
+            <td>Path</td>
+            <td>Edit</td>
+            <td>Remove</td>
+        </tr>
         <tr th:each="source : ${sources}">
             <td><span th:text="${source.owner}">owner</span></td>
             <td><span th:text="${source.path}">path</span></td>
             <td><a th:href="@{'/sources/edit/' + ${source.id}}">Edit</a></td>
+            <td><a th:href="@{'/sources/remove/' + ${source.id}}">Remove</a></td>
         </tr>
     </table>
 </div>

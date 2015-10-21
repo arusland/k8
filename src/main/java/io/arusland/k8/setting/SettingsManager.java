@@ -1,8 +1,7 @@
 package io.arusland.k8.setting;
 
+import io.arusland.k8.dto.SearchSourceDto;
 import io.arusland.k8.source.SearchSource;
-import io.arusland.k8.source.SourceOwner;
-import io.arusland.k8.source.SourceType;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -12,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +37,9 @@ public class SettingsManager {
 
                 SettingsWrapper wrapper = (SettingsWrapper) um.unmarshal(file);
 
-                result.addAll(wrapper.getSearchSources().stream().map(SettingsManager::toEntity)
+                result.addAll(wrapper.getSearchSources()
+                        .stream()
+                        .map(p -> p.toEntity())
                         .collect(Collectors.toList()));
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -58,13 +60,27 @@ public class SettingsManager {
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
             wrapper.setSearchSource(sources.stream()
-                    .map(p -> toConfig(p))
+                    .map(p -> SearchSourceDto.fromEntity(p))
                     .collect(Collectors.toList()));
 
             m.marshal(wrapper, file);
         } catch (Exception e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    public void update(SearchSource source){
+        List<SearchSource> sources = loadSources();
+        Optional<SearchSource> oldSource = sources.stream()
+                .filter(p -> p.getId().equals(source.getId()))
+                .findFirst();
+
+        if (oldSource.isPresent()){
+            sources.remove(oldSource.get());
+        }
+
+        sources.add(source);
+        saveSources(sources);
     }
 
     File getSettingsFile() {
@@ -90,88 +106,17 @@ public class SettingsManager {
         return instance;
     }
 
-    private static SearchSource toEntity(SearchSourceConfig source) {
-        return new SearchSource(SourceType.valueOf(source.getType()),
-                source.getPath(),
-                source.getLastActiveCatalog(),
-                new SourceOwner(source.getOwner()), source.getId());
-    }
-
-    private static SearchSourceConfig toConfig(SearchSource source) {
-        return new SearchSourceConfig(source.getType().toString(), source.getPath(),
-                source.getOwner().getName(), source.getLastActiveCatalog(), source.getId());
-    }
-
     @XmlRootElement(name = "settings")
     public static class SettingsWrapper {
-        private List<SearchSourceConfig> searchSource = new LinkedList<>();
+        private List<SearchSourceDto> searchSource = new LinkedList<>();
 
         @XmlElement(name = "searchSource")
-        public List<SearchSourceConfig> getSearchSources() {
+        public List<SearchSourceDto> getSearchSources() {
             return searchSource;
         }
 
-        public void setSearchSource(List<SearchSourceConfig> searchSource) {
+        public void setSearchSource(List<SearchSourceDto> searchSource) {
             this.searchSource = searchSource;
-        }
-    }
-
-    public static class SearchSourceConfig {
-        private Long id;
-        private String type;
-        private String path;
-        private String owner;
-        private String lastActiveCatalog;
-
-        public SearchSourceConfig() {
-        }
-
-        public SearchSourceConfig(String type, String path, String owner, String lastActiveCatalog, Long id) {
-            this.id = id;
-            this.type = type;
-            this.path = path;
-            this.owner = owner;
-            this.lastActiveCatalog = lastActiveCatalog;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public String getOwner() {
-            return owner;
-        }
-
-        public void setOwner(String owner) {
-            this.owner = owner;
-        }
-
-        public String getLastActiveCatalog() {
-            return lastActiveCatalog;
-        }
-
-        public void setLastActiveCatalog(String lastActiveCatalog) {
-            this.lastActiveCatalog = lastActiveCatalog;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
         }
     }
 }

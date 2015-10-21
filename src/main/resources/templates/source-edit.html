@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <title>Edit Search Source</title>
+    <link rel="stylesheet" type="text/css" media="all"
+          href="#" th:href="@{/css/main.css}"/>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"
+          th:href="@{/webjars/bootstrap/3.3.4/css/bootstrap.min.css}"
+          rel="stylesheet" media="screen"/>
+    <link href="#" th:href="@{/webjars/fancybox/2.1.5/jquery.fancybox.css}"
+          rel="stylesheet" media="screen"/>
+</head>
+<body>
+<div class="main-container">
+    <h1>Edit Search Source</h1>
+
+    <form th:action="@{/sources/edit}" method="post" class="form">
+        <div class="form-group">
+            <label for="path">Path:</label>
+            <input type="text" th:name="path" class="form-control" th:value="${source.path}"/>
+        </div>
+
+        <div class="form-group">
+            <label for="type">Type:</label>
+
+            <select th:name="type" th:field="*{source.type}" class="form-control">
+                <option th:each="type : ${types}"
+                        th:value="${type}"
+                        th:text="${type}">
+                </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="owner">Owner:</label>
+
+            <select th:name="owner" th:field="*{source.owner}" class="form-control">
+                <option th:each="owner : ${owners}"
+                        th:value="${owner}"
+                        th:text="${owner}">
+                </option>
+            </select>
+        </div>
+
+        <input type="submit" id="save" th:value="Save" class="btn btn-primary"/>
+        <input type="hidden" th:name="id" th:value="${source.id}"/>
+    </form>
+</div>
+</body>
+</html>
