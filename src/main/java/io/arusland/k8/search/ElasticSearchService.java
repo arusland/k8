@@ -57,7 +57,7 @@ public class ElasticSearchService implements SearchService {
 
         Map<String, Object> doc = object.toDoc();
 
-        IndexResponse response = client.prepareIndex(object.getSearchIndex(), object.getSearchType(), object.getId())
+        client.prepareIndex(object.getSearchIndex(), object.getSearchType(), object.getId())
                 .setSource(doc)
                 .setRefresh(true)
                 .execute()

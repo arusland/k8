@@ -71,7 +71,7 @@ public class SearchSourceController {
 
         // TODO: by default create private source
         view.addObject("source", SearchSourceDto
-                .fromEntity(new SearchSource(SourceType.Database,
+                .fromEntity(new SearchSource(SourceType.FileSystem,
                         StringUtils.EMPTY,
                         SourceOwner.DEFAULT)));
 

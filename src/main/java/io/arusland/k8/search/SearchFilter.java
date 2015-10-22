@@ -24,10 +24,6 @@ public class SearchFilter {
         Validate.isTrue(this.sourceOwners.length > 0);
     }
 
-    public SourceOwner[] getSearchOwners() {
-        return sourceOwners;
-    }
-
     public String[] getSearchIndecies() {
         return Arrays.stream(sourceOwners)
                 .map(p -> p.getName())

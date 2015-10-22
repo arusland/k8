@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class SettingsManager {
     private final static String DEFAULT_FILE_NAME = "k8settings.xml";
     private final File file;
-    private static SettingsManager instance;
+    private volatile static SettingsManager instance;
     private final static Object lock = new Object();
 
     SettingsManager(File file) {

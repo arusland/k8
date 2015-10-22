@@ -15,6 +15,7 @@ public class SearchSource {
     private final String path;
     private final SourceOwner owner;
     private final String lastActiveCatalog;
+    private final static Random random = new Random();
 
     public SearchSource(SourceType type, String path, String lastActiveCatalog, SourceOwner owner) {
         this(type, path, lastActiveCatalog, owner, null);
@@ -65,7 +66,7 @@ public class SearchSource {
     }
 
     private static Long getRandomId() {
-        return Math.abs(new Random().nextLong());
+        return Math.abs(random.nextLong());
     }
 
 
