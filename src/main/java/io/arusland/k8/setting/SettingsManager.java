@@ -83,6 +83,14 @@ public class SettingsManager {
         saveSources(sources);
     }
 
+    public Optional<SearchSource> getSourceById(Long id){
+        return getInstance()
+                .loadSources()
+                .stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst();
+    }
+
     File getSettingsFile() {
         return file;
     }
@@ -104,6 +112,17 @@ public class SettingsManager {
         }
 
         return instance;
+    }
+
+    public boolean removeSourceById(Long id) {
+        List<SearchSource> sources = getInstance().loadSources();
+
+        if (sources.removeIf(p -> p.getId().equals(id))){
+            saveSources(sources);
+            return true;
+        }
+
+        return false;
     }
 
     @XmlRootElement(name = "settings")

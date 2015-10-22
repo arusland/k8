@@ -24,7 +24,7 @@ public class SearchSource {
         this.id = id == null ? getRandomId() : id;
         this.owner = Validate.notNull(owner);
         this.type = Validate.notNull(type);
-        this.path = PathUtils.normalizePath(Validate.notBlank(path));
+        this.path = PathUtils.normalizePath(path);
         this.lastActiveCatalog = PathUtils.normalizePath(lastActiveCatalog);
     }
 
