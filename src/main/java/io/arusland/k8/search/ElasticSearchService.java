@@ -2,6 +2,7 @@ package io.arusland.k8.search;
 
 import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
+import io.arusland.k8.util.ThreadUtil;
 import org.apache.commons.lang3.Validate;
 import org.elasticsearch.action.count.CountResponse;
 import org.elasticsearch.action.index.IndexResponse;
@@ -32,6 +33,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 @Service
 public class ElasticSearchService implements SearchService {
     private static final Logger logger = LoggerFactory.getLogger(ElasticSearchService.class);
+    private static final int BOOTSTRAP_TIMEOUT = 3000;
     private final Client client;
     private final ResultParser resultParser;
 
@@ -44,11 +46,7 @@ public class ElasticSearchService implements SearchService {
         client = builder.node().client();
 
         // TODO: if remove next lines tests fail with "Failed to execute phase [query], all shards failed"
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            logger.error(e.getMessage(), e);
-        }
+        ThreadUtil.sleep(BOOTSTRAP_TIMEOUT);
     }
 
     @Override

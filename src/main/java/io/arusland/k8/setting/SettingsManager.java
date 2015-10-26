@@ -30,19 +30,21 @@ public class SettingsManager {
     public List<SearchSource> loadSources() {
         final List<SearchSource> result = new LinkedList<>();
 
-        if (file.exists()) {
-            try {
-                JAXBContext context = JAXBContext.newInstance(SettingsWrapper.class);
-                Unmarshaller um = context.createUnmarshaller();
+        synchronized (lock) {
+            if (file.exists()) {
+                try {
+                    JAXBContext context = JAXBContext.newInstance(SettingsWrapper.class);
+                    Unmarshaller um = context.createUnmarshaller();
 
-                SettingsWrapper wrapper = (SettingsWrapper) um.unmarshal(file);
+                    SettingsWrapper wrapper = (SettingsWrapper) um.unmarshal(file);
 
-                result.addAll(wrapper.getSearchSources()
-                        .stream()
-                        .map(p -> p.toEntity())
-                        .collect(Collectors.toList()));
-            } catch (Exception e) {
-                throw new IllegalStateException(e);
+                    result.addAll(wrapper.getSearchSources()
+                            .stream()
+                            .map(p -> p.toEntity())
+                            .collect(Collectors.toList()));
+                } catch (Exception e) {
+                    throw new IllegalStateException(e);
+                }
             }
         }
 
@@ -50,42 +52,45 @@ public class SettingsManager {
     }
 
     public void saveSources(final List<SearchSource> sources) {
-        try {
-            JAXBContext context = JAXBContext.newInstance(SettingsWrapper.class);
-            Unmarshaller um = context.createUnmarshaller();
-            SettingsWrapper wrapper = file.exists() ? (SettingsWrapper) um.unmarshal(file)
-                    : new SettingsWrapper();
+        synchronized (lock) {
+            try {
+                JAXBContext context = JAXBContext.newInstance(SettingsWrapper.class);
+                Unmarshaller um = context.createUnmarshaller();
+                SettingsWrapper wrapper = file.exists() ? (SettingsWrapper) um.unmarshal(file)
+                        : new SettingsWrapper();
 
-            Marshaller m = context.createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+                Marshaller m = context.createMarshaller();
+                m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            wrapper.setSearchSource(sources.stream()
-                    .map(p -> SearchSourceDto.fromEntity(p))
-                    .collect(Collectors.toList()));
+                wrapper.setSearchSource(sources.stream()
+                        .map(p -> SearchSourceDto.fromEntity(p))
+                        .collect(Collectors.toList()));
 
-            m.marshal(wrapper, file);
-        } catch (Exception e) {
-            throw new IllegalStateException(e);
+                m.marshal(wrapper, file);
+            } catch (Exception e) {
+                throw new IllegalStateException(e);
+            }
         }
     }
 
     public void update(SearchSource source){
-        List<SearchSource> sources = loadSources();
-        Optional<SearchSource> oldSource = sources.stream()
-                .filter(p -> p.getId().equals(source.getId()))
-                .findFirst();
+        synchronized (lock) {
+            List<SearchSource> sources = loadSources();
+            Optional<SearchSource> oldSource = sources.stream()
+                    .filter(p -> p.getId().equals(source.getId()))
+                    .findFirst();
 
-        if (oldSource.isPresent()){
-            sources.remove(oldSource.get());
+            if (oldSource.isPresent()) {
+                sources.remove(oldSource.get());
+            }
+
+            sources.add(source);
+            saveSources(sources);
         }
-
-        sources.add(source);
-        saveSources(sources);
     }
 
     public Optional<SearchSource> getSourceById(Long id){
-        return getInstance()
-                .loadSources()
+        return loadSources()
                 .stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst();
