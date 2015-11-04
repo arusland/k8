@@ -3,6 +3,7 @@ package io.arusland.k8.catalog.fs.format;
 import io.arusland.k8.catalog.ObjectType;
 import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.fs.FileSearchObject;
+import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceOwner;
 import org.apache.commons.io.FileUtils;
 
@@ -15,12 +16,12 @@ import java.io.IOException;
 public class TextFileSearchObject extends FileSearchObject {
     private String content;
 
-    public TextFileSearchObject(File file, SourceOwner owner) throws IOException {
-        super(file, owner);
+    public TextFileSearchObject(File file, SearchSource source) throws IOException {
+        super(file, source);
     }
 
-    public TextFileSearchObject(PropertyGetter fields) {
-        super(fields);
+    public TextFileSearchObject(PropertyGetter fields, SearchSource source) {
+        super(fields, source);
     }
 
     @Override

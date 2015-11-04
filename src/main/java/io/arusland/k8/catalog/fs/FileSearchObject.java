@@ -3,7 +3,7 @@ package io.arusland.k8.catalog.fs;
 import io.arusland.k8.catalog.KnownObjectIcons;
 import io.arusland.k8.catalog.PropertyGetter;
 import io.arusland.k8.catalog.SearchObject;
-import io.arusland.k8.source.SourceOwner;
+import io.arusland.k8.source.SearchSource;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -26,17 +26,17 @@ public class FileSearchObject extends SearchObject {
     private final static Pattern ROOT_DRIVE = Pattern.compile("^(\\w):\\\\$");
     private final File file;
 
-    public FileSearchObject(File file, SourceOwner owner) throws IOException {
+    public FileSearchObject(File file, SearchSource source) throws IOException {
         super(normalizeFileName(Validate.notNull(file)), file.getAbsolutePath(), file.isDirectory() ? 0L : file.length(),
                 file.isDirectory() ? HashUtils.sha1Hex(file.getAbsolutePath().toLowerCase()) : HashUtils.sha1Hex(file),
                 StringUtils.EMPTY, SourceType.FileSystem, FileTypeHelper.getObjectType(file),
-                KnownObjectIcons.BINARY_FILE, getFileCreateTime(file), new Date(file.lastModified()), file.isDirectory(), owner);
+                KnownObjectIcons.BINARY_FILE, getFileCreateTime(file), new Date(file.lastModified()), file.isDirectory(), source);
 
         this.file = file;
     }
 
-    public FileSearchObject(PropertyGetter fields){
-        super(fields, SourceType.FileSystem, SourceOwner.NONE);
+    public FileSearchObject(PropertyGetter fields, SearchSource source){
+        super(fields, SourceType.FileSystem, source);
         this.file = null;
     }
 

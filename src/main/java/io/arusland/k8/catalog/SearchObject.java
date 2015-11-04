@@ -1,7 +1,6 @@
 package io.arusland.k8.catalog;
 
 import io.arusland.k8.source.SearchSource;
-import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import io.arusland.k8.util.HashUtils;
 import org.apache.commons.lang3.Validate;
@@ -41,14 +40,13 @@ public abstract class SearchObject {
     private final boolean isCatalog;
     private final Date createDate;
     private final Date modifyDate;
-    private final SourceOwner owner;
-
+    private final SearchSource source;
 
     public SearchObject(String name, String path, long size, String hash, String content,
                         SourceType sourceType, ObjectType objectType, String icon,
-                        Date createDate, Date modifiedDate, boolean isCatalog, SourceOwner owner) {
+                        Date createDate, Date modifiedDate, boolean isCatalog, SearchSource source) {
         this.isCatalog = isCatalog;
-        this.owner = Validate.notNull(owner);
+        this.source = Validate.notNull(source);
         this.name = Validate.notBlank(name);
         this.path = Validate.notBlank(path);
         this.id = HashUtils.sha1Hex(path.toLowerCase());
@@ -62,11 +60,11 @@ public abstract class SearchObject {
         this.modifyDate = Validate.notNull(modifiedDate);
     }
 
-    public SearchObject(PropertyGetter fields, SourceType sourceType, SourceOwner owner){
+    public SearchObject(PropertyGetter fields, SourceType sourceType, SearchSource source){
         this(fields.getValue(NAME), fields.getValue(PATH), fields.getLong(SIZE),
                 fields.getValue(HASH), fields.getValue(CONTENT), sourceType, fields.getObjectType(),
                 fields.getValue(ICON), fields.getDate(CREATE_DATE), fields.getDate(MODIFY_DATE),
-                fields.getValue(IS_CATALOG), owner);
+                fields.getValue(IS_CATALOG), source);
     }
 
     public String getId() {
@@ -121,8 +119,8 @@ public abstract class SearchObject {
         return FIELDS;
     }
 
-    public SourceOwner getOwner() {
-        return owner;
+    public SearchSource getSource() {
+        return source;
     }
 
     public Map<String, Object> toDoc(){
@@ -153,7 +151,7 @@ public abstract class SearchObject {
     public abstract String getSearchType();
 
     public String getSearchIndex() {
-        return SourceOwner.DEFAULT.getName();
+        return source.getIndexName();
     }
 
     @Override

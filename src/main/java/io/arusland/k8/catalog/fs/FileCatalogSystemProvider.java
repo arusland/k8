@@ -7,7 +7,6 @@ import io.arusland.k8.catalog.SearchObject;
 import io.arusland.k8.catalog.fs.format.TextFileSearchObject;
 import io.arusland.k8.catalog.fs.format.xml.XmlFileSearchObject;
 import io.arusland.k8.source.SearchSource;
-import io.arusland.k8.source.SourceOwner;
 import io.arusland.k8.source.SourceType;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -65,7 +64,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
             if (file != null) {
                 try {
-                    return createObject(file, source.getOwner());
+                    return createObject(file, source);
                 } catch (IOException e) {
                     throw new IllegalStateException(e);
                 }
@@ -73,7 +72,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         }
 
         try {
-            return createObject(rootFile, source.getOwner());
+            return createObject(rootFile, source);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -81,7 +80,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
     @Override
     public Iterable<SearchObject> getObjects(SearchObject catalog) {
-        FileObjectIterator iterator = new FileObjectIterator(catalog, catalog.getOwner());
+        FileObjectIterator iterator = new FileObjectIterator(catalog, catalog.getSource());
 
         return new Iterable<SearchObject>() {
             @Override
@@ -100,7 +99,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
         if (parent != null) {
             try {
-                return createObject(parent, catalog.getOwner());
+                return createObject(parent, catalog.getSource());
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
@@ -110,16 +109,16 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
     }
 
     @Override
-    public SearchObject getObject(PropertyGetter props) {
+    public SearchObject getObject(PropertyGetter props, SearchSource source) {
         ObjectType type = props.getObjectType();
 
         switch (type) {
             case FILE_TEXT:
-                return new TextFileSearchObject(props);
+                return new TextFileSearchObject(props, source);
             case FILE_XML:
-                return new XmlFileSearchObject(props);
+                return new XmlFileSearchObject(props, source);
             default:
-                return new FileSearchObject(props);
+                return new FileSearchObject(props, source);
         }
     }
 
@@ -128,31 +127,31 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
         return type.toString().startsWith("FILE_");
     }
 
-    private FileSearchObject createObject(File file, SourceOwner owner) throws IOException {
+    private FileSearchObject createObject(File file, SearchSource source) throws IOException {
         ObjectType type = FileTypeHelper.getObjectType(file);
 
         switch (type) {
             case FILE_TEXT:
-                return new TextFileSearchObject(file, owner);
+                return new TextFileSearchObject(file, source);
             case FILE_XML:
-                return new XmlFileSearchObject(file, owner);
+                return new XmlFileSearchObject(file, source);
             default:
-                return new FileSearchObject(file, owner);
+                return new FileSearchObject(file, source);
         }
     }
 
     private class FileObjectIterator implements Iterator<SearchObject> {
         private final File[] files;
-        private final SourceOwner owner;
+        private final SearchSource source;
         private int currentIndex;
 
-        public FileObjectIterator(SearchObject catalog, SourceOwner owner) {
+        public FileObjectIterator(SearchObject catalog, SearchSource source) {
             Validate.isInstanceOf(FileSearchObject.class, catalog);
             Validate.isTrue(catalog.isCatalog(), "Method supports only catalog objects");
 
             File file = ((FileSearchObject) catalog).getFile();
             this.files = file.listFiles(file1 -> !fileSkipper.test(file1));
-            this.owner = Validate.notNull(owner);
+            this.source = Validate.notNull(source);
         }
 
         @Override
@@ -174,7 +173,7 @@ public class FileCatalogSystemProvider implements CatalogSystemProvider {
 
             if (file != null) {
                 try {
-                    return createObject(file, owner);
+                    return createObject(file, source);
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
                 }

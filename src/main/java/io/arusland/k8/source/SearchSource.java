@@ -15,6 +15,7 @@ public class SearchSource {
     private final String path;
     private final SourceOwner owner;
     private final String lastActiveCatalog;
+    private final String indexName;
     private final static Random random = new Random();
 
     public SearchSource(SourceType type, String path, String lastActiveCatalog, SourceOwner owner) {
@@ -27,6 +28,7 @@ public class SearchSource {
         this.type = Validate.notNull(type);
         this.path = PathUtils.normalizePath(path);
         this.lastActiveCatalog = PathUtils.normalizePath(lastActiveCatalog);
+        this.indexName = Long.toHexString(this.id);
     }
 
     public SearchSource(SourceType type, String path, SourceOwner owner){
@@ -65,10 +67,13 @@ public class SearchSource {
         return id;
     }
 
+    public String getIndexName(){
+        return indexName;
+    }
+
     private static Long getRandomId() {
         return Math.abs(random.nextLong());
     }
-
 
     @Override
     public String toString() {

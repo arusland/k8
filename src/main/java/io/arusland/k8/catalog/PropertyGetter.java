@@ -44,6 +44,11 @@ public class PropertyGetter {
         return ObjectType.valueOf(getValue(SearchObject.TYPE));
     }
 
+    public String getIndex(){
+        throw new IllegalStateException("Not implemented!");
+    }
+
+
     static {
         Set<String> collect = new HashSet<>();
 

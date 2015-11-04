@@ -34,7 +34,7 @@ public class DatabaseCatalogSystemProvider implements CatalogSystemProvider {
     }
 
     @Override
-    public SearchObject getObject(PropertyGetter props) {
+    public SearchObject getObject(PropertyGetter props, SearchSource source) {
         throw new UnsupportedOperationException();
     }
 
